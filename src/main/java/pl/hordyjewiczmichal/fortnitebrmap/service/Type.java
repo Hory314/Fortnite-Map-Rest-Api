@@ -33,17 +33,11 @@ public enum Type
     ZIPLINE("zipline"); /* line! */
 
 
-    public String type;
+    private String name;
 
 
-    Type(String type)
+    Type(String name)
     {
-        this.type = type;
-    }
-
-    @Override
-    public String toString()
-    {
-        return this.type;
+        this.name = name;
     }
 }

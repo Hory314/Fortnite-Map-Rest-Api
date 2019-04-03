@@ -1,6 +1,8 @@
 package pl.hordyjewiczmichal.fortnitebrmap.model;
 
 import lombok.Data;
+import pl.hordyjewiczmichal.fortnitebrmap.service.Location;
+import pl.hordyjewiczmichal.fortnitebrmap.service.Type;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -20,5 +22,9 @@ public class Item
     @Column(columnDefinition = "DECIMAL(10, 6) NOT NULL")
     private BigDecimal lng;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private Type type;
+
+    @Enumerated(EnumType.STRING)
+    private Location location;
 }
