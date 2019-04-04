@@ -1,8 +1,8 @@
 package pl.hordyjewiczmichal.fortnitebrmap.model;
 
 import lombok.Data;
-import pl.hordyjewiczmichal.fortnitebrmap.service.Location;
-import pl.hordyjewiczmichal.fortnitebrmap.service.Type;
+import pl.hordyjewiczmichal.fortnitebrmap.statics.Location;
+import pl.hordyjewiczmichal.fortnitebrmap.statics.Type;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -23,6 +23,7 @@ public class Item
     private BigDecimal lng;
 
     @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "VARBINARY(64)")
     private Type type;
 
     @Enumerated(EnumType.STRING)

@@ -1,4 +1,6 @@
-package pl.hordyjewiczmichal.fortnitebrmap.service;
+package pl.hordyjewiczmichal.fortnitebrmap.statics;
+
+import lombok.Getter;
 
 public enum Type
 {
@@ -32,7 +34,7 @@ public enum Type
     TELEPORTER("teleporter"), /* line! */
     ZIPLINE("zipline"); /* line! */
 
-
+    @Getter
     private String name;
 
 
