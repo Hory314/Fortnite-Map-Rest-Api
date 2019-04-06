@@ -1,17 +1,18 @@
 package pl.hordyjewiczmichal.fortnitebrmap.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.hordyjewiczmichal.fortnitebrmap.dto.FeatureJSON;
-import pl.hordyjewiczmichal.fortnitebrmap.dto.GeoJSON;
-import pl.hordyjewiczmichal.fortnitebrmap.dto.GeometryJSON;
 import pl.hordyjewiczmichal.fortnitebrmap.model.Item;
+import pl.hordyjewiczmichal.fortnitebrmap.model.Location;
 import pl.hordyjewiczmichal.fortnitebrmap.repository.ItemRepository;
-import pl.hordyjewiczmichal.fortnitebrmap.statics.Location;
+import pl.hordyjewiczmichal.fortnitebrmap.repository.LocationRepository;
 import pl.hordyjewiczmichal.fortnitebrmap.statics.Type;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,36 +21,35 @@ public class ItemService
 {
     @Autowired
     ItemRepository itemRepository;
+    @Autowired
+    LocationRepository locationRepository;
+    @Autowired
+    LocationService locationService;
 
-    public GeoJSON getItems(Type type)
+    public ObjectNode getItems(Type type)
     {
         List<Item> items = itemRepository.findItemsByType(type);
         return getGeoJSON(items);
     }
 
 
-    public GeoJSON getItemsInLocation(Type type, String location) throws IllegalArgumentException
+    public ObjectNode getItemsInLocation(Type type, String location) throws NotFoundException
     {
-        Location enumLocation;
-        try
-        {
-            enumLocation = Location.valueOf(location.replaceAll("[- ]", "_").toUpperCase());
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw new IllegalArgumentException("404 Location Not Found");
-        }
+        String parsedLocation = locationService.parseLocation(location);
+        Location l = locationRepository.findByName(parsedLocation);
 
-        List<Item> items = itemRepository.findByTypeAndLocation(type, enumLocation);
+        if (l == null) throw new NotFoundException(parsedLocation);
+
+        List<Item> items = itemRepository.findByTypeAndLocation(type, l);
         return getGeoJSON(items);
     }
 
-    public GeoJSON getRandomItem(Type type)
+    public ObjectNode getRandomItem(Type type)
     {
         return getRandomItem(type, 1);
     }
 
-    public GeoJSON getRandomItem(Type type, int limit)
+    public ObjectNode getRandomItem(Type type, int limit)
     {
         List<Item> items = itemRepository.findRandom(type.toString(), limit);
         return getGeoJSON(items);
@@ -65,27 +65,26 @@ public class ItemService
 //        itemRepository.save(item);
 //    }
 
-    private GeoJSON getGeoJSON(List<Item> items)
+    private ObjectNode getGeoJSON(List<Item> items)
     {
-        GeoJSON geoJSON = new GeoJSON();
-        List<FeatureJSON> features = new ArrayList<>();
+        ObjectNode geoJSON = new ObjectMapper().createObjectNode();
+        ArrayNode features = geoJSON.put("type", "FeatureCollection")
+                                    .putArray("features");
 
         items.forEach(item ->
         {
-            String lat = item.getLat().toString();
-            String lng = item.getLng().toString();
+            ObjectNode f = features.addObject();
+            f.put("type", "Feature")
+             .putObject("properties");
 
-            FeatureJSON feature = new FeatureJSON();
-            GeometryJSON geometry = new GeometryJSON(lat, lng);
+            ArrayNode coords = f.putObject("geometry")
+                                .put("type", "Point")
+                                .putArray("coordinates");
 
-            feature.setGeometry(geometry);
-            features.add(feature);
+            coords.add(item.getLng())
+                  .add(item.getLat());
         });
-
-        geoJSON.setFeatures(features);
 
         return geoJSON;
     }
-
-
 }

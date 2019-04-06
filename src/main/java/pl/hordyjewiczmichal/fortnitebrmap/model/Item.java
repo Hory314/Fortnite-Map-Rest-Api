@@ -1,7 +1,6 @@
 package pl.hordyjewiczmichal.fortnitebrmap.model;
 
 import lombok.Data;
-import pl.hordyjewiczmichal.fortnitebrmap.statics.Location;
 import pl.hordyjewiczmichal.fortnitebrmap.statics.Type;
 
 import javax.persistence.*;
@@ -16,16 +15,21 @@ public class Item
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "DECIMAL(10, 6) NOT NULL")
+    @Column(columnDefinition = "DECIMAL(10, 6)", nullable = false)
     private BigDecimal lat;
 
-    @Column(columnDefinition = "DECIMAL(10, 6) NOT NULL")
+    @Column(columnDefinition = "DECIMAL(10, 6)", nullable = false)
     private BigDecimal lng;
 
-    @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARBINARY(64)")
-    private Type type;
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
 
     @Enumerated(EnumType.STRING)
-    private Location location;
+    @Column(nullable = false)
+    private Type type;
+
+
+//    @Enumerated(EnumType.STRING)
+//    private Location location;
 }
