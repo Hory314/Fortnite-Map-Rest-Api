@@ -1,6 +1,7 @@
 package pl.hordyjewiczmichal.fortnitebrmap.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import javassist.NotFoundException;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,9 +38,9 @@ public abstract class AbstractItemController
         {
             return itemService.getItemsInLocation(getType(), location);
         }
-        catch (Exception e)
+        catch (NotFoundException e)
         {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Location '" + e.getMessage() + "' not found");
         }
     }
 

@@ -38,7 +38,7 @@ public class ItemService
         String parsedLocation = locationService.parseLocation(location);
         Location l = locationRepository.findByName(parsedLocation);
 
-        if (l == null) throw new NotFoundException(parsedLocation);
+        if (l == null) throw new NotFoundException(location);
 
         List<Item> items = itemRepository.findByTypeAndLocation(type, l);
         return getGeoJSON(items);
