@@ -45,8 +45,14 @@ public abstract class AbstractItemController
     }
 
     @GetMapping("/random")
-    protected ObjectNode getOneRandom()
+    protected ObjectNode getRandom()
     {
         return itemService.getRandomItem(getType());
+    }
+
+    @GetMapping("/random/{limit:\\d+}")
+    protected ObjectNode getRandom(@PathVariable int limit)
+    {
+        return itemService.getRandomItem(getType(), limit);
     }
 }

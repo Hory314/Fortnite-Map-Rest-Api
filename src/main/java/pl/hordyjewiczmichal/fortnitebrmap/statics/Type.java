@@ -5,41 +5,42 @@ import lombok.Getter;
 public enum Type
 {
     /* LOOT */
-    CHEST("chest"),
-    FLOOR_LOOT("floor_loot"),
-    AMMO_BOX("ammo_box"),
-    VENDING_MACHINE("vending_machine"),
+    CHEST("Chest"),
+    FLOOR_LOOT("Floor Loot"),
+    AMMO_BOX("Ammo Box"),
+    VENDING_MACHINE("Vending Machine"),
 
     /* VEHICLES */
-    SHOPPING_CART("shopping_cart"),
-    ALL_TERRAIN_KART("atk"),
-    QUADCRASHER("quadcrasher"),
-    X4_STORMWING("plane"),
-    DRIFT_BOARD("drift_board"),
-    PIRATE_CANNON("pirate_cannon"),
-    BALLER("baller"),
+    SHOPPING_CART("Shopping Cart"),
+    ALL_TERRAIN_KART("ATK"),
+    QUADCRASHER("Quadcrasher"),
+    X4_STORMWING("Plane"),
+    DRIFT_BOARD("Drift Board"),
+    PIRATE_CANNON("Pirate Cannon"),
+    BALLER("Baller"),
 
     /* CONSUMABLES */
-    HOP_ROCK("hop_rock"),
-    MUSHROOM("mushroom"),
-    APPLE("apple"),
-    BANANA("banana"),
-    COCONUT("coconut"),
-    PEPPER("pepper"),
+    HOP_ROCK("Hop Rock"),
+    MUSHROOM("Mushroom"),
+    APPLE("Apple"),
+    BANANA("Banana"),
+    COCONUT("Coconut"),
+    PEPPER("Pepper"),
 
     /* UTILITIES */
-    COZY_CAMPFIRE("campfire"),
-    RIFT("rift"),
-    VOLCANIC_VENTS("geyser"),
-    TELEPORTER("teleporter"), /* line! */
-    ZIPLINE("zipline"); /* line! */
+    COZY_CAMPFIRE("Campfire"),
+    RIFT("Rift"),
+    VOLCANIC_VENT("Geyser"),
+    TELEPORTER("Teleporter"), /* line! */
+    ZIPLINE("Zipline"), /* line! */
+    REBOOT_VAN("Reboot Van");
 
     @Getter
-    private String name;
+    private String friendlyName;
 
 
-    Type(String name)
+    Type(String friendlyName)
     {
-        this.name = name;
+        this.friendlyName = friendlyName;
     }
 }
