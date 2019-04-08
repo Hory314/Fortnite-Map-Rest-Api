@@ -19,8 +19,8 @@ INSERT INTO fortnite_map.locations (id, name) VALUES (18, 'Frosty Flights');
 INSERT INTO fortnite_map.locations (id, name) VALUES (19, 'Happy Hamlet');
 INSERT INTO fortnite_map.locations (id, name) VALUES (20, 'Lucky Landing');
 
-INSERT INTO fortnite_map.items (id, lat, lng, type, location_id) VALUES (1, 1231.000000, 123.000000, 'CHEST', 11);
-INSERT INTO fortnite_map.items (id, lat, lng, type, location_id) VALUES (2, 55.234000, 55.000000, 'CHEST', 1);
-INSERT INTO fortnite_map.items (id, lat, lng, type, location_id) VALUES (3, 99.234000, 9999.000000, 'CHEST', 11);
-INSERT INTO fortnite_map.items (id, lat, lng, type, location_id) VALUES (4, 3.100000, 4.000000, 'VENDING_MACHINE', null);
-INSERT INTO fortnite_map.items (id, lat, lng, type, location_id) VALUES (5, 5.100000, 6.000000, 'VENDING_MACHINE', 11);
+# INSERT INTO fortnite_map.items (id, lat, lng, type, location_id) VALUES (1, 1231.000000, 123.000000, 'CHEST', 11);
+# INSERT INTO fortnite_map.items (id, lat, lng, type, location_id) VALUES (2, 55.234000, 55.000000, 'CHEST', 1);
+# INSERT INTO fortnite_map.items (id, lat, lng, type, location_id) VALUES (3, 99.234000, 9999.000000, 'CHEST', 11);
+# INSERT INTO fortnite_map.items (id, lat, lng, type, location_id) VALUES (4, 3.100000, 4.000000, 'VENDING_MACHINE', null);
+# INSERT INTO fortnite_map.items (id, lat, lng, type, location_id) VALUES (5, 5.100000, 6.000000, 'VENDING_MACHINE', 11);

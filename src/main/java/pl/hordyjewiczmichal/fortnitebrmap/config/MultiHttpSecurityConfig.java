@@ -2,6 +2,7 @@ package pl.hordyjewiczmichal.fortnitebrmap.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -11,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter
+public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
 {
 //    @Autowired
 //    DataSource dataSource;
@@ -21,6 +22,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     {
         return new BCryptPasswordEncoder();
     }
+
+//    @Autowired
+//    public void configureGlobal(AuthenticationManagerBuilder auth) // spring example
+//    {
+//        auth
+//                .inMemoryAuthentication()
+//                .withUser("user").password("password").roles("USER").and()
+//                .withUser("admin").password("password").roles("USER", "ADMIN");
+//    }
 
 //    @Override
 //    public void configure(AuthenticationManagerBuilder auth) throws Exception
@@ -32,22 +42,46 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 //                .authoritiesByUsernameQuery("SELECT email, 'default' FROM admins WHERE email = ?"); // mocking authorities table
 //    }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception
+    @Configuration
+    @Order(1)
+    public static class StaticWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter
     {
-        http.authorizeRequests()
-            .antMatchers("/api/**").permitAll()
-            //.anyRequest().authenticated()
+        protected void configure(HttpSecurity http) throws Exception
+        {
+            // X-Frame-Options config for static/specified sites
+            http
+                    .antMatcher("/reboot-vans/**")
+                    .headers()
+                    .frameOptions()
+                    .disable();
+                   // .addHeaderWriter(new XFrameOptionsHeaderWriter(new StaticAllowFromStrategy(URI.create("https://fortnitepolska.pl"))));
+        }
+    }
 
-            //.and()
-            //.formLogin()
-            //.loginPage("/login").permitAll()
+    @Configuration
+    @Order(2)
+    public static class WebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter
+    {
+        protected void configure(HttpSecurity http) throws Exception
+        {
+            // X-Frame-Options config for remaining sites
+            http
+                    .antMatcher("/**")
+                    .headers()
+                    .frameOptions()
+                    .deny();
 
-            .and()
-            .httpBasic();
+            //////*** PERMISSIONS CONFIG ***/////
+            http.authorizeRequests()
+                .antMatchers("/api/**").permitAll()
+               // .anyRequest().authenticated()
 
+                //.and()
+                //.formLogin()
+                //.loginPage("/login").permitAll()
 
-
+                .and()
+                .httpBasic();
 
        /* http.authorizeRequests()
                 .antMatchers("/app/**").authenticated() // require login in this path
@@ -68,5 +102,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 
                 .and()
                 .httpBasic();*/
+        }
     }
+
+
+
 }

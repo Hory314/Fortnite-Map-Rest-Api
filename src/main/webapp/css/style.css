@@ -1,0 +1,19 @@
+body {
+    padding: 0;
+    margin: 0;
+}
+html, body, #fnbr_map {
+    height: 100%;
+    width: 100vw;
+}
+
+.leaflet-container {
+    background: rgba(0, 0, 0, 0.0) !important; /* transparent outside-bounds background color */
+}
+
+.coords-div-icon {
+    font-size: 16px;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: right;
+}
