@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () =>
         divIconLetters["options"]["html"] = String.fromCharCode(65 + i + 5);
         L.marker([-5 * 250 * (-1) + 60, (i * 250) + 250 / 2], {icon: divIconLetters}).addTo(gridOverlay);
         divIconNumbers["options"]["html"] = i + 6;
-        L.marker([i * 250 * (-1) - 250 / 2, (-5 * 250) - 10], {icon: divIconNumbers}).addTo(gridOverlay);
+        L.marker([i * 250 * (-1) - 220 / 2, (-5 * 250) - 10], {icon: divIconNumbers}).addTo(gridOverlay);
     }
 
     gridOverlay.addTo(battleRoyaleMap); // show grid by default

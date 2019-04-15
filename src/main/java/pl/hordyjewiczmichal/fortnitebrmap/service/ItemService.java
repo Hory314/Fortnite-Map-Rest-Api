@@ -32,12 +32,6 @@ public class ItemService
         return getGeoJSON(items);
     }
 
-    public ObjectNode getItemsWithLine(Type type)
-    {
-        List<Item> items = itemRepository.findItemsByType(type);
-        return getGeoJSONWithLines(items);
-    }
-
     public ObjectNode getItemsInLocation(Type type, String location) throws NotFoundException
     {
         String parsedLocation = locationService.parseLocation(location);
@@ -73,18 +67,24 @@ public class ItemService
     private ObjectNode getGeoJSON(List<Item> items)
     {
         ObjectNode geoJSON = new ObjectMapper().createObjectNode();
+        ArrayNode features = geoJSON.put("type", "FeatureCollection")
+                                    .putArray("features");
 
-        populateFeatures(items, geoJSON);
+        items.forEach(item ->
+        {
+            ObjectNode f = features.addObject();
+            f.put("type", "Feature")
+             .putObject("properties");
 
-        return geoJSON;
-    }
+            ArrayNode coords = f.putObject("geometry")
+                                .put("type", "Point")
+                                .putArray("coordinates");
 
-    private ObjectNode getGeoJSONWithLines(List<Item> items)
-    {
-        ObjectNode geoJSON = new ObjectMapper().createObjectNode();
+            coords.add(item.getLng())
+                  .add(item.getLat());
+        });
 
-        ArrayNode features = populateFeatures(items, geoJSON);
-
+        // check if item is linked
         items.forEach(item ->
         {
             if (item.getLink() != null)
@@ -105,24 +105,50 @@ public class ItemService
         return geoJSON;
     }
 
-    private ArrayNode populateFeatures(List<Item> items, ObjectNode geoJSON)
-    {
-        ArrayNode features = geoJSON.put("type", "FeatureCollection")
-                                    .putArray("features");
+//    private ObjectNode getGeoJSONWithLines(List<Item> items)
+//    {
+//        ObjectNode geoJSON = new ObjectMapper().createObjectNode();
+//
+//        ArrayNode features = populateFeatures(items, geoJSON);
+//
+//        items.forEach(item ->
+//        {
+//            if (item.getLink() != null)
+//            {
+//                ObjectNode f = features.addObject();
+//                f.put("type", "Feature")
+//                 .putObject("properties");
+//
+//                ArrayNode coords = f.putObject("geometry")
+//                                    .put("type", "LineString")
+//                                    .putArray("coordinates");
+//
+//                coords.addArray().add(item.getLng()).add(item.getLat());
+//                coords.addArray().add(item.getLink().getLng()).add(item.getLink().getLat());
+//            }
+//        });
+//
+//        return geoJSON;
+//    }
 
-        items.forEach(item ->
-        {
-            ObjectNode f = features.addObject();
-            f.put("type", "Feature")
-             .putObject("properties");
-
-            ArrayNode coords = f.putObject("geometry")
-                                .put("type", "Point")
-                                .putArray("coordinates");
-
-            coords.add(item.getLng())
-                  .add(item.getLat());
-        });
-        return features;
-    }
+//    private ArrayNode populateFeatures(List<Item> items, ObjectNode geoJSON)
+//    {
+//        ArrayNode features = geoJSON.put("type", "FeatureCollection")
+//                                    .putArray("features");
+//
+//        items.forEach(item ->
+//        {
+//            ObjectNode f = features.addObject();
+//            f.put("type", "Feature")
+//             .putObject("properties");
+//
+//            ArrayNode coords = f.putObject("geometry")
+//                                .put("type", "Point")
+//                                .putArray("coordinates");
+//
+//            coords.add(item.getLng())
+//                  .add(item.getLat());
+//        });
+//        return features;
+//    }
 }

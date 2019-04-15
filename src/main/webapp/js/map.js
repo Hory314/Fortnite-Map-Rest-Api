@@ -1,18 +1,265 @@
-function loadJSON(url, callback)
-{
-    let xobj = new XMLHttpRequest();
-    xobj.overrideMimeType("application/json");
-    xobj.open('GET', url, true);
-    xobj.onreadystatechange = function ()
+const MAP_VERSION = "8.20";
+const API_URL = "http://localhost:8080/api/";
+// const API_URL = "api/";
+const ITEMS = // comment property to prevent showing it in layers
     {
-        if (xobj.readyState === 4 && xobj.status == "200")
-        {
-            // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
-            callback(xobj.responseText);
+        chest: {
+            url: "chests",
+            name: "Chests",
+            icon: L.icon({
+                iconUrl: 'images/icons/chest.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        floorLoot: {
+            url: "floor-loot",
+            name: "Floor Loot",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        ammoBox: {
+            url: "ammo-boxes",
+            name: "Ammo Boxes",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        vendingMachine: {
+            url: "vending-machines",
+            name: "Vending Machines",
+            icon: L.icon({
+                iconUrl: 'images/icons/vending-machine.png',
+                iconSize: [25, 32],
+                iconAnchor: [12.5, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+
+        // shoppingCart: {
+        //     url: "shopping-carts",
+        //     name: "Shopping Carts",
+        //     icon: L.icon({
+        //         iconUrl: 'images/icons/unknown.png',
+        //         iconSize: [32, 32],
+        //         iconAnchor: [16, 16],
+        //         popupAnchor: [0, -16]
+        //     })
+        // },
+        // allTerrainKart: {
+        //     url: "atks",
+        //     name: "ATKs",
+        //     icon: L.icon({
+        //         iconUrl: 'images/icons/unknown.png',
+        //         iconSize: [32, 32],
+        //         iconAnchor: [16, 16],
+        //         popupAnchor: [0, -16]
+        //     })
+        // },
+        quadcrasher: {
+            url: "quadcrashers",
+            name: "Quadcrashers",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        // plane: {
+        //     url: "planes",
+        //     name: "Planes",
+        //     icon: L.icon({
+        //         iconUrl: 'images/icons/unknown.png',
+        //         iconSize: [32, 32],
+        //         iconAnchor: [16, 16],
+        //         popupAnchor: [0, -16]
+        //     })
+        // },
+        driftBoard: {
+            url: "drift-boards",
+            name: "Drift Boards",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        pirateCannon: {
+            url: "pirate-cannons",
+            name: "Pirate Cannons",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        baller: {
+            url: "ballers",
+            name: "Ballers",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+
+        // hopRock: {
+        //     url: "hop-rocks",
+        //     name: "Hop Rocks",
+        //     icon: L.icon({
+        //         iconUrl: 'images/icons/unknown.png',
+        //         iconSize: [32, 32],
+        //         iconAnchor: [16, 16],
+        //         popupAnchor: [0, -16]
+        //     })
+        // },
+        mushroom: {
+            url: "mushrooms",
+            name: "Mushrooms",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        apple: {
+            url: "apples",
+            name: "Apples",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        banana: {
+            url: "bananas",
+            name: "Bananas",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        coconut: {
+            url: "coconuts",
+            name: "Coconuts",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        pepper: {
+            url: "peppers",
+            name: "Peppers",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        // shadowStone: {
+        //     url: "shadow-stones",
+        //     name: "Shadow Stones",
+        //     icon: L.icon({
+        //         iconUrl: 'images/icons/unknown.png',
+        //         iconSize: [32, 32],
+        //         iconAnchor: [16, 16],
+        //         popupAnchor: [0, -16]
+        //     })
+        // },
+
+        campfire: {
+            url: "campfires",
+            name: "Campfires",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        rift: {
+            url: "rifts",
+            name: "Rifts",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        geyser: {
+            url: "geysers",
+            name: "Geysers",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            })
+        },
+        teleporter: {
+            url: "teleporters",
+            name: "Teleporters",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            }),
+            options: {
+                color: "#3388ff",
+                width: 3
+            }
+        },
+        zipline: {
+            url: "ziplines",
+            name: "Ziplines",
+            icon: L.icon({
+                iconUrl: 'images/icons/unknown.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            }),
+            options: {
+                color: "#000000",
+                width: 3,
+                dashArray: "3 3"
+            }
+        },
+        rebootVan: {
+            url: "reboot-vans",
+            name: "Reboot Vans",
+            icon: L.icon({
+                iconUrl: 'images/icons/reboot-van.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 24],
+                popupAnchor: [0, -16]
+            })
         }
     };
-    xobj.send(null);
-}
+const MAP_SHIFT = 70; // adjust this value to determine map center
+const MAP_WIDTH = 2500 + MAP_SHIFT;
+const MAP_HEIGHT = 2500 + MAP_SHIFT;
+const MAP_BOUNDS = [[(MAP_HEIGHT / -2) + MAP_SHIFT, (MAP_WIDTH / -2)], [(MAP_HEIGHT / 2) + MAP_SHIFT, (MAP_WIDTH / 2)]];
 
 function ajax(url, method, successFunction)
 {
@@ -28,59 +275,41 @@ function ajax(url, method, successFunction)
 
 document.addEventListener("DOMContentLoaded", () =>
 {
-    const MAP_VERSION = "8.20";
-    const LAYERS_URLS = ["chests", "vending-machines", "reboot-vans"];
-    const LAYERS_FRIENDLY_NAMES = ["Skrzynie", "Automaty", "Vany"];
-
-    const ICONS =
-        {
-            chest: L.icon({
-                iconUrl: 'images/icons/chest.png',
-                iconSize: [32, 32],
-                iconAnchor: [16, 16],
-                popupAnchor: [0, -16]
-            }),
-            vendingMachine: L.icon({
-                iconUrl: 'images/icons/vending-machine.png',
-                iconSize: [25, 32],
-                iconAnchor: [12.5, 16],
-                popupAnchor: [0, -16]
-            })
-        };
-
-    const MAP_SHIFT = 70; // adjust this value to determine map center
-    const MAP_WIDTH = 2500 + MAP_SHIFT;
-    const MAP_HEIGHT = 2500 + MAP_SHIFT;
-    // const MAP_BOUNDS = [[0, 0], [MAP_HEIGHT, MAP_WIDTH]];
-    const MAP_BOUNDS = [[(MAP_HEIGHT / -2) + MAP_SHIFT, (MAP_WIDTH / -2)], [(MAP_HEIGHT / 2) + MAP_SHIFT, (MAP_WIDTH / 2)]];
+    //initConts();
 
     let brMapEl = window.getComputedStyle(document.getElementById("fnbr_map"));
     let divHeight = brMapEl.height.replace("px", "").replace("%", "");
-   // document.getElementById("fnbr_map").style.width = divHeight + "px";
+    // document.getElementById("fnbr_map").style.width = divHeight + "px";
 
-       $("#fnbr_map").on("contextmenu", (e) => e.preventDefault()); // disable right-click context menu
-
-    console.log("hei: " + divHeight);
-    console.log(Math.log2(MAP_HEIGHT / divHeight));
+    $("#fnbr_map").on("contextmenu", (e) => e.preventDefault()); // disable right-click context menu
 
     let battleRoyaleMap = L.map('fnbr_map', {
         crs: L.CRS.Simple,
         minZoom: Math.log2(MAP_HEIGHT / divHeight) * (-1),
         maxZoom: Math.log2(MAP_HEIGHT / divHeight) * (-1) + 4,
-        center: [MAP_WIDTH / 2, MAP_HEIGHT / 2],
+        center: [0, 0],
         zoom: Math.log2(MAP_HEIGHT / divHeight) * (-1),
         maxBounds: MAP_BOUNDS,
         zoomDelta: 0.25,
         zoomSnap: 0,
         wheelPxPerZoomLevel: 50,
-        wheelDebounceTime: 20
+        wheelDebounceTime: 20,
+        attributionControl: false,
+        zoomControl: false,
+        // dragging: !L.Browser.mobile, // disable 1 finger map moving
+        zoomTouch: true
     });
 
+    L.control.attribution({prefix: "&copy; <a>Hory314</a>", position: "bottomright"}).addTo(battleRoyaleMap);
+
+
+    // image file
     L.imageOverlay(`images/maps/${MAP_VERSION}/full.jpg`, MAP_BOUNDS).addTo(battleRoyaleMap);
 
+    let overlays = {};
     /* GRID */
-    // let center = L.latLng(0, 0);
-    // L.marker(center).addTo(battleRoyaleMap).bindPopup("Map center");
+    let gridOverlay = L.layerGroup();
+
     let gridOptions =
         {
             color: 'white',
@@ -88,130 +317,82 @@ document.addEventListener("DOMContentLoaded", () =>
             opacity: 0.3,
             lineCap: 'butt',
             lineJoin: 'bevel',
-
+            interactive: false,
+            noClip: true
         };
 
+    // horizontal and vertical lines
     for (let i = -1250; i <= 1250; i += 250)
     {
-        L.polyline([L.latLng(-1250, i), L.latLng(1250, i)], gridOptions).addTo(battleRoyaleMap);
-        L.polyline([L.latLng(i, -1250), L.latLng(i, 1250)], gridOptions).addTo(battleRoyaleMap);
-
-        for (let j = -1250; j <= 1250; j += 250)
-        {
-            // let pnt = L.latLng(j, i);
-            // L.marker(pnt).addTo(battleRoyaleMap).bindPopup(j + " " + i);
-        }
-
-
+        L.polyline([L.latLng(-1250, i), L.latLng(1250, i)], gridOptions).addTo(gridOverlay);
+        L.polyline([L.latLng(i, -1250), L.latLng(i, 1250)], gridOptions).addTo(gridOverlay);
     }
+
+    // coordinates
+    let coordsOptions =
+        {
+            color: 'rgb(41, 49, 69)',
+            weight: 0,
+            fillOpacity: 1,
+            interactive: false,
+            noClip: true
+        };
+    L.rectangle([L.latLng(1250, -1250 - 35), L.latLng(1250 + 70 + 35, 1250)], coordsOptions).addTo(gridOverlay);
+    L.rectangle([L.latLng(1250, -1250 - 35), L.latLng(-1250 + 35, -1250 + 70 - 35)], coordsOptions).addTo(gridOverlay);
+
+    // A-J 1-10
+    for (let i = -5; i < 5; i++)
+    {
+        let divIconLetters = L.divIcon({className: 'coords-div-icon', html: ""});
+        let divIconNumbers = L.divIcon({className: 'coords-div-icon', html: ""});
+
+        divIconLetters["options"]["html"] = String.fromCharCode(65 + i + 5);
+        L.marker([-5 * 250 * (-1) + 60, (i * 250) + 250 / 2], {icon: divIconLetters}).addTo(gridOverlay);
+        divIconNumbers["options"]["html"] = i + 6;
+        L.marker([i * 250 * (-1) - 220 / 2, (-5 * 250) - 10], {icon: divIconNumbers}).addTo(gridOverlay);
+    }
+
+    gridOverlay.addTo(battleRoyaleMap); // show grid by default
     /* /GRID */
 
-    // let chestsOverlay = L.layerGroup();
-    // let vendingMachinesOverlay = L.layerGroup();
-    // for (var property in ICONS)
-    // {
-    //     console.log(`ICONS.${property} = ${ICONS[property]}`);
-    // }
-    // read chests json
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // for (let i = 0; i < LAYERS_URLS.length; i++)
+    /* Load JSONs*/
+    // let lineOptions = {
+    //     color: "black",
+    //     width: 3
+    // };
 
-
-    let overlays = {};
-
-    let i = 0;
-    for (let iconName in ICONS)
+    let first = true;
+    for (let item in ITEMS)
     {
         let newItemOverlay = L.layerGroup();
-        ajax('http://localhost:8080/api/' + LAYERS_URLS[i], 'GET', function (geoJson)
+        ajax(API_URL + ITEMS[item]['url'], 'GET', function (geoJson)
         {
             L.geoJSON(geoJson, {
-                pointToLayer: (geoJsonPoint, latlng) => L.marker(latlng, {icon: ICONS[iconName]}),
-            }).bindPopup(layer =>
-            {
-                return "y: " + layer.feature.geometry.coordinates[1].toString() + "<br>x: " + layer.feature.geometry.coordinates[0].toString()
+                pointToLayer: (geoJsonPoint, latlng) => L.marker(latlng, {icon: ITEMS[item]["icon"]}),
+                style: () => ITEMS[item]["options"]
             }).addTo(newItemOverlay);
         });
 
-        if (LAYERS_URLS[i] === 'chests') newItemOverlay.addTo(battleRoyaleMap); // check chest layer by default
-        overlays[LAYERS_FRIENDLY_NAMES[i]] = newItemOverlay;
-
-        i++;
-    }
-    L.control.layers({}, overlays, {collapsed: true}).addTo(battleRoyaleMap);
-
-    // DEBUG
-    for (let propName in overlays)
-    {
-        if (overlays.hasOwnProperty(propName))
+        if (first) // check 1st layer by default
         {
-            console.log(`propName : ${overlays[propName]}`);
+            newItemOverlay.addTo(battleRoyaleMap);
+            first = false;
         }
+
+        overlays[ITEMS[item]['name']] = newItemOverlay;
     }
 
+    overlays['Map grid'] = gridOverlay; // add grid to overlays
 
-    // function getItem(geoJson)
-    // {
-    //     L.geoJSON(geoJson, {
-    //         pointToLayer: (geoJsonPoint, latlng) => L.marker(latlng, {icon: ICONS['chest']}),
-    //     }).bindPopup(layer =>
-    //     {
-    //         return "y: " + layer.feature.geometry.coordinates[1].toString() + "<br>x: " + layer.feature.geometry.coordinates[0].toString()
-    //     }).addTo(chestsOverlay);
-    // }
+    let layersBox = L.control.layers({}, overlays, {collapsed: true}).addTo(battleRoyaleMap);
+    let layersBoxEl = layersBox.getContainer();
+    layersBoxEl.style.top = "23px";
+    layersBoxEl.style.right = "0px";
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // ajax('http://localhost:8080/api/chests', 'GET', getItem);
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // my custom zoom control (button)
+    let zoomControl = L.control.zoom({position: 'topleft'}).addTo(battleRoyaleMap);
+    let zoomControlEl = zoomControl.getContainer();
+    zoomControlEl.style.top = "23px";
+    zoomControlEl.style.left = "12px";
 
-    // loadJSON("chests.geojson", function (response)
-    // {
-    //     // Parse JSON string into object
-    //     let jsonObj = JSON.parse(response);
-    //
-    //     L.geoJSON(jsonObj, {
-    //         pointToLayer: (geoJsonPoint, latlng) => L.marker(latlng, {icon: ICONS['chest']}),
-    //     }).bindPopup(layer =>
-    //     {
-    //         return "y: " + layer.feature.geometry.coordinates[1].toString() + "<br>x: " + layer.feature.geometry.coordinates[0].toString()
-    //     }).addTo(chestsOverlay);
-    // });
-
-    // read vending machnes json
-    // loadJSON("vending-machines.geojson", function (response)
-    // {
-    //     // Parse JSON string into object
-    //     let jsonObj = JSON.parse(response);
-    //
-    //     L.geoJSON(jsonObj, {
-    //         pointToLayer: (geoJsonPoint, latlng) => L.marker(latlng, {icon: ICONS['vendingMachine']}),
-    //     }).bindPopup(layer =>
-    //     {
-    //         return "y: " + layer.feature.geometry.coordinates[1].toString() + "<br>x: " + layer.feature.geometry.coordinates[0].toString()
-    //     }).addTo(vendingMachinesOverlay);
-    // });
-
-    // let overlays = {
-    //     "Chests": chestsOverlay,
-    //     "Vending Machines": vendingMachinesOverlay
-    // };
-    //
-    // battleRoyaleMap.addLayer(chestsOverlay);
-    // L.control.layers({}, overlays, {collapsed: false}).addTo(battleRoyaleMap);
-
-    /* POPUP */
-    let popup = L.popup();
-
-    function onMapClick(e)
-    {
-        popup
-            .setLatLng(e.latlng)
-            .setContent("You clicked the map at " + e.latlng.toString())
-            .openOn(battleRoyaleMap);
-    }
-
-    battleRoyaleMap.on('click', onMapClick);
 });

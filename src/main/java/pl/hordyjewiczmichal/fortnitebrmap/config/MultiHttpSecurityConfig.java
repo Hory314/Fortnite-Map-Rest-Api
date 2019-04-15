@@ -54,7 +54,7 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
                     .headers()
                     .frameOptions()
                     .disable();
-                   // .addHeaderWriter(new XFrameOptionsHeaderWriter(new StaticAllowFromStrategy(URI.create("https://fortnitepolska.pl"))));
+                   // .addHeaderWriter(new XFrameOptionsHeaderWriter(new StaticAllowFromStrategy(URI.create("https://example.com"))));
         }
     }
 

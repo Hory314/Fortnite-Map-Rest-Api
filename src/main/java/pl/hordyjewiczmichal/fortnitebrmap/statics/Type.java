@@ -24,8 +24,9 @@ public enum Type
     MUSHROOM("Mushroom"),
     APPLE("Apple"),
     BANANA("Banana"),
-    COCONUT("Coconut"),
+    COCONUT("Coconut"), // this one only spawns randomly from a destroyed palm tree
     PEPPER("Pepper"),
+    SHADOW_STONE("Shadow Stone"),
 
     /* UTILITIES */
     COZY_CAMPFIRE("Campfire"),
