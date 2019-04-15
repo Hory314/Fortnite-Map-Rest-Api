@@ -32,6 +32,11 @@ public class ItemService
         return getGeoJSON(items);
     }
 
+    public ObjectNode getItemsWithLine(Type type)
+    {
+        List<Item> items = itemRepository.findItemsByType(type);
+        return getGeoJSONWithLines(items);
+    }
 
     public ObjectNode getItemsInLocation(Type type, String location) throws NotFoundException
     {
@@ -68,6 +73,40 @@ public class ItemService
     private ObjectNode getGeoJSON(List<Item> items)
     {
         ObjectNode geoJSON = new ObjectMapper().createObjectNode();
+
+        populateFeatures(items, geoJSON);
+
+        return geoJSON;
+    }
+
+    private ObjectNode getGeoJSONWithLines(List<Item> items)
+    {
+        ObjectNode geoJSON = new ObjectMapper().createObjectNode();
+
+        ArrayNode features = populateFeatures(items, geoJSON);
+
+        items.forEach(item ->
+        {
+            if (item.getLink() != null)
+            {
+                ObjectNode f = features.addObject();
+                f.put("type", "Feature")
+                 .putObject("properties");
+
+                ArrayNode coords = f.putObject("geometry")
+                                    .put("type", "LineString")
+                                    .putArray("coordinates");
+
+                coords.addArray().add(item.getLng()).add(item.getLat());
+                coords.addArray().add(item.getLink().getLng()).add(item.getLink().getLat());
+            }
+        });
+
+        return geoJSON;
+    }
+
+    private ArrayNode populateFeatures(List<Item> items, ObjectNode geoJSON)
+    {
         ArrayNode features = geoJSON.put("type", "FeatureCollection")
                                     .putArray("features");
 
@@ -84,7 +123,6 @@ public class ItemService
             coords.add(item.getLng())
                   .add(item.getLat());
         });
-
-        return geoJSON;
+        return features;
     }
 }

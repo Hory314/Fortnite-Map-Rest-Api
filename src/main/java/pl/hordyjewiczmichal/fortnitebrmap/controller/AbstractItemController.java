@@ -14,7 +14,7 @@ import pl.hordyjewiczmichal.fortnitebrmap.statics.Type;
 public abstract class AbstractItemController
 {
     @Autowired
-    ItemService itemService;
+    protected ItemService itemService;
 
     @Getter
     protected Type type;

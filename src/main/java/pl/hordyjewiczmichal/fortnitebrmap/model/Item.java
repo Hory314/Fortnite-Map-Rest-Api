@@ -29,7 +29,9 @@ public class Item
     @Column(nullable = false)
     private Type type;
 
+    @Column(columnDefinition = "BIT(1) DEFAULT FALSE", nullable = false)
+    private Boolean accepted;
 
-//    @Enumerated(EnumType.STRING)
-//    private Location location;
+    @OneToOne
+    private Item link;
 }
