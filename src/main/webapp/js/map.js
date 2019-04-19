@@ -1,3 +1,4 @@
+const ELEMENT_ID = "fnbr_map";
 const MAP_VERSION = "8.20";
 const API_URL = "http://localhost:8080/api/";
 // const API_URL = "api/";
@@ -261,29 +262,13 @@ const MAP_WIDTH = 2500 + MAP_SHIFT;
 const MAP_HEIGHT = 2500 + MAP_SHIFT;
 const MAP_BOUNDS = [[(MAP_HEIGHT / -2) + MAP_SHIFT, (MAP_WIDTH / -2)], [(MAP_HEIGHT / 2) + MAP_SHIFT, (MAP_WIDTH / 2)]];
 
-function ajax(url, method, successFunction)
+function initMap(elementId)
 {
-    $.ajax({
-        url: url,
-        type: method
-    })
-        .done(function (data)
-        {
-            successFunction(data);
-        });
-}
-
-document.addEventListener("DOMContentLoaded", () =>
-{
-    //initConts();
-
-    let brMapEl = window.getComputedStyle(document.getElementById("fnbr_map"));
+    /* calculate divHeight for map initial zoom */
+    let brMapEl = window.getComputedStyle(document.getElementById(elementId));
     let divHeight = brMapEl.height.replace("px", "").replace("%", "");
-    // document.getElementById("fnbr_map").style.width = divHeight + "px";
 
-    $("#fnbr_map").on("contextmenu", (e) => e.preventDefault()); // disable right-click context menu
-
-    let battleRoyaleMap = L.map('fnbr_map', {
+    let battleRoyaleMap = L.map(elementId, {
         crs: L.CRS.Simple,
         minZoom: Math.log2(MAP_HEIGHT / divHeight) * (-1),
         maxZoom: Math.log2(MAP_HEIGHT / divHeight) * (-1) + 4,
@@ -302,12 +287,14 @@ document.addEventListener("DOMContentLoaded", () =>
 
     L.control.attribution({prefix: "&copy; <a>Hory314</a>", position: "bottomright"}).addTo(battleRoyaleMap);
 
-
     // image file
     L.imageOverlay(`images/maps/${MAP_VERSION}/full.jpg`, MAP_BOUNDS).addTo(battleRoyaleMap);
 
-    let overlays = {};
-    /* GRID */
+    return battleRoyaleMap;
+}
+
+function initGridOverlay(map)
+{
     let gridOverlay = L.layerGroup();
 
     let gridOptions =
@@ -352,14 +339,14 @@ document.addEventListener("DOMContentLoaded", () =>
         L.marker([i * 250 * (-1) - 220 / 2, (-5 * 250) - 10], {icon: divIconNumbers}).addTo(gridOverlay);
     }
 
-    gridOverlay.addTo(battleRoyaleMap); // show grid by default
-    /* /GRID */
+    gridOverlay.addTo(map); // show grid by default
 
-    /* Load JSONs*/
-    // let lineOptions = {
-    //     color: "black",
-    //     width: 3
-    // };
+    return gridOverlay;
+}
+
+function addJsonToOverlays(map)
+{
+    let overlays = {};
 
     let first = true;
     for (let item in ITEMS)
@@ -375,24 +362,116 @@ document.addEventListener("DOMContentLoaded", () =>
 
         if (first) // check 1st layer by default
         {
-            newItemOverlay.addTo(battleRoyaleMap);
+            newItemOverlay.addTo(map);
             first = false;
         }
 
         overlays[ITEMS[item]['name']] = newItemOverlay;
     }
 
-    overlays['Map grid'] = gridOverlay; // add grid to overlays
+    return overlays;
+}
 
-    let layersBox = L.control.layers({}, overlays, {collapsed: true}).addTo(battleRoyaleMap);
+function ajax(url, method, successFunction)
+{
+    $.ajax({
+        url: url,
+        type: method
+    })
+        .done(function (data)
+        {
+            successFunction(data);
+        });
+}
+
+function customizeLayersBox(map, overlays)
+{
+    let layersBox = L.control.layers({}, overlays, {collapsed: true}).addTo(map);
     let layersBoxEl = layersBox.getContainer();
     layersBoxEl.style.top = "23px";
     layersBoxEl.style.right = "0px";
+}
 
-    // my custom zoom control (button)
-    let zoomControl = L.control.zoom({position: 'topleft'}).addTo(battleRoyaleMap);
+function customizeZoomButton(map)
+{
+    let zoomControl = L.control.zoom({position: 'topleft'}).addTo(map);
     let zoomControlEl = zoomControl.getContainer();
     zoomControlEl.style.top = "23px";
     zoomControlEl.style.left = "12px";
+}
 
+function addContextMenu(elementId, leafletMap)
+{
+    /* INIT */
+    let map = $(`#${elementId}`); // disable right-click context menu
+
+    let menu = $("<div id='map-menu'>");
+    menu.css("min-width", "200px");
+    menu.css("background-color", "#FFF");
+    menu.css("display", "none");
+    menu.css("position", "relative");
+    menu.css("z-index", "9999999");
+    menu.css("box-shadow", "rgba(187, 187, 187, 0.8) 2px 2px 3px 0px");
+
+    let addAnchor = $(`<a href='#${new Date().getTime()}'>Dodaj punkt</a>`);
+    addAnchor.css("display", "block");
+
+    menu.append(addAnchor);
+    map.append(menu);
+    /* */
+
+    /* EVENTS */
+    let newPoint;
+
+    map.on("contextmenu", (e) =>
+    {
+        e.preventDefault();
+        menu.css("top", e.pageY);
+        menu.css("left", e.pageX);
+        menu.css("display", "inline-block");
+
+        let latlng = leafletMap.mouseEventToLatLng(e.originalEvent);
+        newPoint = [Math.round(latlng.lat * 1000000) / 1000000, Math.round(latlng.lng * 1000000) / 1000000];
+    });
+
+    addAnchor.on("mousedown", (e) =>
+    {
+        e.stopPropagation(); // prevent mousedown on map (otherwise mousedown
+                             // event on map will fire and hide menu first, preventing click event on anchor)
+    });
+
+    addAnchor.on("click", () =>
+    {
+        menu.css("display", "none"); // after click, hide menu, and proceed with points...
+        console.log("POST send with points: " + newPoint[0] + " and " + newPoint[1]);
+    });
+
+    map.on("mousedown wheel", () =>
+    {
+        menu.css("display", "none"); // hide menu on dragging or scrolling
+    });
+
+    // TODO: continue work on menu
+}
+
+document.addEventListener("DOMContentLoaded", () =>
+{
+    /* init map */
+    let battleRoyaleMap = initMap(ELEMENT_ID);
+
+    /* init grid */
+    let gridOverlay = initGridOverlay(battleRoyaleMap);
+
+    /* load JSONs*/
+    let overlays = addJsonToOverlays(battleRoyaleMap);
+    overlays['Map grid'] = gridOverlay; // add grid to overlays (as last entry)
+
+    /* customize layers box */
+    customizeLayersBox(battleRoyaleMap, overlays);
+
+    /* customize zoom button */
+    customizeZoomButton(battleRoyaleMap);
+
+    /* add context menu */
+    addContextMenu(ELEMENT_ID, battleRoyaleMap);
 });
