@@ -5,9 +5,9 @@ import javassist.NotFoundException;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import pl.hordyjewiczmichal.fortnitebrmap.dto.NewItemDTO;
 import pl.hordyjewiczmichal.fortnitebrmap.service.ItemService;
 import pl.hordyjewiczmichal.fortnitebrmap.statics.Type;
 
@@ -25,6 +25,7 @@ public abstract class AbstractItemController
         this.type = type;
     }
 
+    /* GET MAPPINGS */
     @GetMapping
     protected ObjectNode getAll()
     {
@@ -55,4 +56,17 @@ public abstract class AbstractItemController
     {
         return itemService.getRandomItem(getType(), limit);
     }
+
+    /* POST MAPPINGS */
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    protected NewItemDTO addItem(@RequestBody NewItemDTO newItemDTO)
+    {
+        // save to db.... // todo
+        return newItemDTO;
+    }
+
+    /* PUT MAPPINGS */
+
+    /* DELETE MAPPINGS */
 }

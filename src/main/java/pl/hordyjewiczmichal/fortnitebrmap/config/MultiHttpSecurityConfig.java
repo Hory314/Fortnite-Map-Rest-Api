@@ -54,7 +54,7 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
                     .headers()
                     .frameOptions()
                     .disable();
-                   // .addHeaderWriter(new XFrameOptionsHeaderWriter(new StaticAllowFromStrategy(URI.create("https://example.com"))));
+            // .addHeaderWriter(new XFrameOptionsHeaderWriter(new StaticAllowFromStrategy(URI.create("https://example.com"))));
         }
     }
 
@@ -74,7 +74,7 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
             //////*** PERMISSIONS CONFIG ***/////
             http.authorizeRequests()
                 .antMatchers("/api/**").permitAll()
-               // .anyRequest().authenticated()
+                // .anyRequest().authenticated()
 
                 //.and()
                 //.formLogin()
@@ -82,6 +82,9 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
 
                 .and()
                 .httpBasic();
+
+            http
+                    .csrf().disable(); // disable csrf
 
        /* http.authorizeRequests()
                 .antMatchers("/app/**").authenticated() // require login in this path
@@ -104,7 +107,6 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
                 .httpBasic();*/
         }
     }
-
 
 
 }
