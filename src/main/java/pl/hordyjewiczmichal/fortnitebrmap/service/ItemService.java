@@ -7,12 +7,14 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.hordyjewiczmichal.fortnitebrmap.dto.NewItemDTO;
 import pl.hordyjewiczmichal.fortnitebrmap.model.Item;
 import pl.hordyjewiczmichal.fortnitebrmap.model.Location;
 import pl.hordyjewiczmichal.fortnitebrmap.repository.ItemRepository;
 import pl.hordyjewiczmichal.fortnitebrmap.repository.LocationRepository;
 import pl.hordyjewiczmichal.fortnitebrmap.statics.Type;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -105,50 +107,22 @@ public class ItemService
         return geoJSON;
     }
 
-//    private ObjectNode getGeoJSONWithLines(List<Item> items)
-//    {
-//        ObjectNode geoJSON = new ObjectMapper().createObjectNode();
-//
-//        ArrayNode features = populateFeatures(items, geoJSON);
-//
-//        items.forEach(item ->
-//        {
-//            if (item.getLink() != null)
-//            {
-//                ObjectNode f = features.addObject();
-//                f.put("type", "Feature")
-//                 .putObject("properties");
-//
-//                ArrayNode coords = f.putObject("geometry")
-//                                    .put("type", "LineString")
-//                                    .putArray("coordinates");
-//
-//                coords.addArray().add(item.getLng()).add(item.getLat());
-//                coords.addArray().add(item.getLink().getLng()).add(item.getLink().getLat());
-//            }
-//        });
-//
-//        return geoJSON;
-//    }
+    public void savePoint(NewItemDTO newItemDTO, Type type)
+    {
+        Item newItem = new Item();
 
-//    private ArrayNode populateFeatures(List<Item> items, ObjectNode geoJSON)
-//    {
-//        ArrayNode features = geoJSON.put("type", "FeatureCollection")
-//                                    .putArray("features");
-//
-//        items.forEach(item ->
-//        {
-//            ObjectNode f = features.addObject();
-//            f.put("type", "Feature")
-//             .putObject("properties");
-//
-//            ArrayNode coords = f.putObject("geometry")
-//                                .put("type", "Point")
-//                                .putArray("coordinates");
-//
-//            coords.add(item.getLng())
-//                  .add(item.getLat());
-//        });
-//        return features;
-//    }
+        newItem.setAccepted(false);
+        newItem.setLat(new BigDecimal(newItemDTO.getLat()));
+        newItem.setLng(new BigDecimal(newItemDTO.getLng()));
+        newItem.setType(type);
+
+        String parsedLocation = locationService.parseLocation(newItemDTO.getLocation());
+        Location l = locationRepository.findByName(parsedLocation);
+        newItem.setLocation(l); // l can be null
+
+//        newItem.setLink(itemRepository.getOne(999999L));
+        newItem.setLink(null); // id of existing Item or null
+
+        itemRepository.save(newItem);
+    }
 }

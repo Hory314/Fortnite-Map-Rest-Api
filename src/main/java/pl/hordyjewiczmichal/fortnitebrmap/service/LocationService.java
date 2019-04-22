@@ -10,6 +10,7 @@ public class LocationService
 
     public String parseLocation(String location)
     {
+        if (location == null) return "";
         return location.replaceAll("[-_]", " ").toLowerCase();
     }
 }

@@ -444,6 +444,26 @@ function addContextMenu(elementId, leafletMap)
     {
         menu.css("display", "none"); // after click, hide menu, and proceed with points...
         console.log("POST send with points: " + newPoint[0] + " and " + newPoint[1]);
+
+        let chestData = {
+            lat: newPoint[0],
+            lng: newPoint[1],
+            location: null,
+            link: null
+        };
+
+        $.ajax({
+            url: API_URL + ITEMS["chest"]["url"],
+            type: "POST",
+            data: JSON.stringify(chestData),
+            dataType: "json",
+            contentType: 'application/json'
+        })
+            .done(function (data)
+            {
+                // do nothing
+                console.log('wyslano posta');
+            });
     });
 
     map.on("mousedown wheel", () =>

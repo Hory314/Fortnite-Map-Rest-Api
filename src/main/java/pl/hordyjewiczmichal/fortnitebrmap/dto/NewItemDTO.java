@@ -11,7 +11,5 @@ public class NewItemDTO
 
     private String location = "";
 
-    private String type = "";
-
-    private String link = ""; // int, String, Item ?
+    private Long link = null; // int, String, Item ?
 }
