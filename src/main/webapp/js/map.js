@@ -440,11 +440,15 @@ function addContextMenu(elementId, leafletMap)
                              // event on map will fire and hide menu first, preventing click event on anchor)
     });
 
+
     addAnchor.on("click", () =>
     {
         menu.css("display", "none"); // after click, hide menu, and proceed with points...
         console.log("POST send with points: " + newPoint[0] + " and " + newPoint[1]);
 
+        showNewPointDiv();
+
+        // content below to function above
         let chestData = {
             lat: newPoint[0],
             lng: newPoint[1],
@@ -471,7 +475,14 @@ function addContextMenu(elementId, leafletMap)
         menu.css("display", "none"); // hide menu on dragging or scrolling
     });
 
-    // TODO: continue work on menu
+    function showNewPointDiv()
+    {
+        // TODO: continue work on menu
+        let newPointDiv = $("<div id='new-point'>");
+
+        newPointDiv.css("position", "fixed").css("width", "200px").css("height", "300px").css("background-color", "gray").css("bottom", "25px").css("right", "25px").css("z-index", "9999");
+        map.append(newPointDiv);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () =>
