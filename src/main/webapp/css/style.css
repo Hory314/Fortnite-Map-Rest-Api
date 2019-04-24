@@ -36,3 +36,32 @@ html, body, #fnbr_map {
 #map-menu > a:hover {
     background-color: #e2e2e2;
 }
+
+#new-point {
+    position: fixed;
+    width: 250px;
+    height: 100%;
+    background-color: gray;
+    bottom: 0;
+    right: -250px;
+    z-index: 2100;
+    transition: right 0.5s ease 0s;
+}
+
+#new-point > .close-btn {
+    background-color: rgba(255, 255, 255, 0);
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 30px;
+    font-family: 'Lucida Console', monospace;
+    font-weight: bold;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+    float: right;
+    cursor: pointer;
+}

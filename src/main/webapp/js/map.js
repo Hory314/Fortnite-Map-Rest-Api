@@ -403,6 +403,7 @@ function customizeZoomButton(map)
 function addContextMenu(elementId, leafletMap)
 {
     /* INIT */
+    // FIXME: .css to stylesheet file
     let map = $(`#${elementId}`); // disable right-click context menu
 
     let menu = $("<div id='map-menu'>");
@@ -410,12 +411,17 @@ function addContextMenu(elementId, leafletMap)
     menu.css("background-color", "#FFF");
     menu.css("display", "none");
     menu.css("position", "relative");
-    menu.css("z-index", "9999999");
+    menu.css("z-index", "2000");
     menu.css("box-shadow", "rgba(187, 187, 187, 0.8) 2px 2px 3px 0px");
 
-    let addAnchor = $(`<a href='#${new Date().getTime()}'>Dodaj punkt</a>`);
+    let addAnchor = $(`<a href='#'>Dodaj punkt</a>`);
     addAnchor.css("display", "block");
 
+    let newPointDiv = $("<div id='new-point'>");
+    let cancelBtn = $("<div>").addClass("close-btn").text("+");
+    newPointDiv.append(cancelBtn);
+
+    $("body").prepend(newPointDiv);
     menu.append(addAnchor);
     map.append(menu);
     /* */
@@ -446,28 +452,35 @@ function addContextMenu(elementId, leafletMap)
         menu.css("display", "none"); // after click, hide menu, and proceed with points...
         console.log("POST send with points: " + newPoint[0] + " and " + newPoint[1]);
 
-        showNewPointDiv();
+        newPointDiv.css("right", "0"); // show div with form
+        // TODO: continue work on menu
 
-        // content below to function above
-        let chestData = {
-            lat: newPoint[0],
-            lng: newPoint[1],
-            location: null,
-            link: null
-        };
-
-        $.ajax({
-            url: API_URL + ITEMS["chest"]["url"],
-            type: "POST",
-            data: JSON.stringify(chestData),
-            dataType: "json",
-            contentType: 'application/json'
-        })
-            .done(function (data)
-            {
-                // do nothing
-                console.log('wyslano posta');
-            });
+        // let chestData = {
+        //     lat: newPoint[0],
+        //     lng: newPoint[1],
+        //     location: null,
+        //     link: null
+        // };
+        //
+        // // $.post(API_URL + ITEMS["chest"]["url"], JSON.stringify(chestData), () =>
+        // // {
+        // //     alert("ok");
+        // //     console.log("okokok");
+        // // }, "json");
+        //
+        // $.ajax({
+        //     url: API_URL + ITEMS["chest"]["url"],
+        //     type: "POST",
+        //     data: JSON.stringify(chestData),
+        //     dataType: "json",
+        //     contentType: "application/json"
+        // })
+        //     .done(function ()
+        //     {
+        //         alert("OK");
+        //         console.log('wyslano posta');
+        //         // do nothing
+        //     });
     });
 
     map.on("mousedown wheel", () =>
@@ -475,14 +488,10 @@ function addContextMenu(elementId, leafletMap)
         menu.css("display", "none"); // hide menu on dragging or scrolling
     });
 
-    function showNewPointDiv()
+    cancelBtn.on("click", (e) =>
     {
-        // TODO: continue work on menu
-        let newPointDiv = $("<div id='new-point'>");
-
-        newPointDiv.css("position", "fixed").css("width", "200px").css("height", "300px").css("background-color", "gray").css("bottom", "25px").css("right", "25px").css("z-index", "9999");
-        map.append(newPointDiv);
-    }
+        $(e.target).parent().css("right", "-250px"); // hide div on close button click / $(this) doesn't work
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () =>
