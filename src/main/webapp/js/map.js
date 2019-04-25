@@ -402,10 +402,14 @@ function customizeZoomButton(map)
 
 function addContextMenu(elementId, leafletMap)
 {
+    /* ELEMENTS */
+    let map = $(`#${elementId}`);
+    let newPointDiv = $("div#new-point");
+    let cancelBtn = newPointDiv.find(".close-btn");
+    let form = newPointDiv.find("form");
+
     /* INIT */
     // FIXME: .css to stylesheet file
-    let map = $(`#${elementId}`); // disable right-click context menu
-
     let menu = $("<div id='map-menu'>");
     menu.css("min-width", "200px");
     menu.css("background-color", "#FFF");
@@ -414,26 +418,31 @@ function addContextMenu(elementId, leafletMap)
     menu.css("z-index", "2000");
     menu.css("box-shadow", "rgba(187, 187, 187, 0.8) 2px 2px 3px 0px");
 
-    let addAnchor = $(`<a href='#'>Dodaj punkt</a>`);
+    let addAnchor = $(`<a href='#'>Add point</a>`);
     addAnchor.css("display", "block");
 
-    let newPointDiv = $("<div id='new-point'>");
-    let cancelBtn = $("<div>").addClass("close-btn").text("+");
-    newPointDiv.append(cancelBtn);
-
-    $("body").prepend(newPointDiv);
     menu.append(addAnchor);
     map.append(menu);
-    /* */
+
+    // init select options
+    for (let item in ITEMS)
+    {
+        form.find("select")
+            .append(
+                $(`<option value="${ITEMS[item]["url"]}">`).text(ITEMS[item]["name"])
+            );
+    }
 
     /* EVENTS */
     let newPoint;
 
     map.on("contextmenu", (e) =>
     {
-        e.preventDefault();
+        e.preventDefault(); // disable right-click context menu
         menu.css("top", e.pageY);
         menu.css("left", e.pageX);
+        // TODO: menu is partially hidden if user clicked near to right side of the screen
+        // TODO: show special pointer after click
         menu.css("display", "inline-block");
 
         let latlng = leafletMap.mouseEventToLatLng(e.originalEvent);
@@ -446,41 +455,16 @@ function addContextMenu(elementId, leafletMap)
                              // event on map will fire and hide menu first, preventing click event on anchor)
     });
 
-
     addAnchor.on("click", () =>
     {
         menu.css("display", "none"); // after click, hide menu, and proceed with points...
         console.log("POST send with points: " + newPoint[0] + " and " + newPoint[1]);
 
-        newPointDiv.css("right", "0"); // show div with form
-        // TODO: continue work on menu
+        let f = form.find("input:first-child");
+        $(f.get(0)).val(newPoint[0]);
+        $(f.get(1)).val(newPoint[1]);
 
-        // let chestData = {
-        //     lat: newPoint[0],
-        //     lng: newPoint[1],
-        //     location: null,
-        //     link: null
-        // };
-        //
-        // // $.post(API_URL + ITEMS["chest"]["url"], JSON.stringify(chestData), () =>
-        // // {
-        // //     alert("ok");
-        // //     console.log("okokok");
-        // // }, "json");
-        //
-        // $.ajax({
-        //     url: API_URL + ITEMS["chest"]["url"],
-        //     type: "POST",
-        //     data: JSON.stringify(chestData),
-        //     dataType: "json",
-        //     contentType: "application/json"
-        // })
-        //     .done(function ()
-        //     {
-        //         alert("OK");
-        //         console.log('wyslano posta');
-        //         // do nothing
-        //     });
+        newPointDiv.css("right", "0"); // show div with form
     });
 
     map.on("mousedown wheel", () =>
@@ -490,7 +474,41 @@ function addContextMenu(elementId, leafletMap)
 
     cancelBtn.on("click", (e) =>
     {
-        $(e.target).parent().css("right", "-250px"); // hide div on close button click / $(this) doesn't work
+        $(e.target).parent().css("right", "-285px"); // hide div on close button click / $(this) doesn't work
+    });
+
+    form.on("submit", (e) =>
+    {
+        e.preventDefault();
+
+        let chestData = {
+            lat: newPoint[0],
+            lng: newPoint[1],
+            location: null,
+            link: null
+        };
+
+        // $.post(API_URL + ITEMS["chest"]["url"], JSON.stringify(chestData), () =>
+        // {
+        //     alert("ok");
+        //     console.log("okokok");
+        // }, "json");
+
+        let itemURL = form.find("select option:selected").attr("value");
+        if (itemURL === undefined)
+        {
+            itemURL = "#"; // TODO: better url correctness check?
+        }
+
+        $.ajax({ // FIXME: OPTIONS method request while sending post (only in IDE debug plugin...)
+            url: API_URL + itemURL,
+            type: "POST",
+            data: JSON.stringify(chestData),
+            dataType: "json",
+            contentType: "application/json"
+        }); // TODO: .done .fail
+
+        // TODO: hide form after submit
     });
 }
 

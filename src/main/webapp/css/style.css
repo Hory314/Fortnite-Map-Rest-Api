@@ -39,13 +39,15 @@ html, body, #fnbr_map {
 
 #new-point {
     position: fixed;
-    width: 250px;
-    height: 100%;
-    background-color: gray;
+    width: calc(250px - 24px);
+    height: calc(100% - 24px);
+    background-color: #FFF;
     bottom: 0;
-    right: -250px;
+    right: -285px;
     z-index: 2100;
     transition: right 0.5s ease 0s;
+    box-shadow: rgba(187, 187, 187, 0.8) -20px 0 20px 0;
+    padding: 12px;
 }
 
 #new-point > .close-btn {
@@ -63,5 +65,12 @@ html, body, #fnbr_map {
     -o-transform: rotate(45deg);
     transform: rotate(45deg);
     float: right;
+    top: -12px;
+    right: -12px;
+    position: relative;
     cursor: pointer;
+}
+
+.clear-fix {
+    clear: both !important;
 }

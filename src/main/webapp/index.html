@@ -9,6 +9,24 @@
     <script src="vendor/leaflet/leaflet.js"></script>
 </head>
 <body>
+<div id="new-point">
+    <div class="close-btn" title="Close">+</div>
+    <div class="clear-fix"></div>
+    <form>
+        <label>X:
+            <input type="text" value="" readonly disabled>
+        </label><br>
+        <label>Y:
+            <input type="text" value="" readonly disabled>
+        </label><br>
+        <label>Item type:
+            <select>
+                <option>[select item type...]</option>
+            </select>
+        </label>
+        <input type="submit" value="Submit">
+    </form>
+</div>
 <div id="fnbr_map"></div>
 <script src="vendor/jquery/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
