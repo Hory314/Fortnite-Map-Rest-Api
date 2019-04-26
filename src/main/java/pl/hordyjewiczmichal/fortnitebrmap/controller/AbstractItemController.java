@@ -60,12 +60,14 @@ public abstract class AbstractItemController
     /* POST MAPPINGS */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    protected void addItem(@RequestBody NewItemDTO newItemDTO)
+    protected ObjectNode addItem(@RequestBody NewItemDTO newItemDTO)
     {
-        itemService.savePoint(newItemDTO, getType());
+        return itemService.savePoint(newItemDTO, getType());
     }
 
     /* PUT MAPPINGS */
+
+    /* PATCH MAPPINGS */
 
     /* DELETE MAPPINGS */
 }

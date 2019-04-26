@@ -485,7 +485,7 @@ function addContextMenu(elementId, leafletMap)
     {
         e.preventDefault();
 
-        let chestData = {
+        let itemData = {
             lat: newPoint[0],
             lng: newPoint[1],
             location: null,
@@ -507,17 +507,20 @@ function addContextMenu(elementId, leafletMap)
         $.ajax({ // FIXME: OPTIONS method request while sending post (only in IDE debug plugin...)
             url: API_URL + itemURL,
             type: "POST",
-            data: JSON.stringify(chestData),
-            dataType: "json",
+            data: JSON.stringify(itemData),
+            dataType: "json", // must be text if POST doesn't return json
             contentType: "application/json"
         })
-            .done(function () //FIXME: .done doesn't work (POST is sent correctly, but always .fail is fired
+            .done(function ()
             { // success
+                alert("success!!!!!!!!!!!!!!!!!!!!!!");
                 // TODO: show new point on map (grayed out)
             })
-            .fail(function ()
+            .fail(function (xhr, textStatus, errorThrown)
             { // fail
-                // TODO: some info cause of fail
+                let errorJSON = JSON.parse(xhr.responseText);
+                alert(`Error occurred: ${errorJSON["status"]} ${errorJSON["error"]}\n${errorThrown}`);
+                // TODO: make better info
             })
             .always(function ()
             { // finally

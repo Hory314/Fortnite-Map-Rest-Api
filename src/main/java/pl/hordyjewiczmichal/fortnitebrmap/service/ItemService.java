@@ -15,6 +15,8 @@ import pl.hordyjewiczmichal.fortnitebrmap.repository.LocationRepository;
 import pl.hordyjewiczmichal.fortnitebrmap.statics.Type;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -107,22 +109,34 @@ public class ItemService
         return geoJSON;
     }
 
-    public void savePoint(NewItemDTO newItemDTO, Type type)
+    private ObjectNode getGeoJSON(Item item)
+    {
+        List<Item> i = new ArrayList<>();
+        i.add(item);
+        return getGeoJSON(i);
+    }
+
+    public ObjectNode savePoint(NewItemDTO newItemDTO, Type type)
     {
         Item newItem = new Item();
 
         newItem.setAccepted(false);
-        newItem.setLat(new BigDecimal(newItemDTO.getLat()));
-        newItem.setLng(new BigDecimal(newItemDTO.getLng()));
+
+        BigDecimal lat = new BigDecimal(newItemDTO.getLat());
+        BigDecimal lng = new BigDecimal(newItemDTO.getLng());
+        newItem.setLat(lat.setScale(6, RoundingMode.HALF_UP));
+        newItem.setLng(lng.setScale(6, RoundingMode.HALF_UP));
+
         newItem.setType(type);
 
         String parsedLocation = locationService.parseLocation(newItemDTO.getLocation());
         Location l = locationRepository.findByName(parsedLocation);
         newItem.setLocation(l); // l can be null
 
-//        newItem.setLink(itemRepository.getOne(999999L));
+        // newItem.setLink(itemRepository.getOne(999999L));
         newItem.setLink(null); // id of existing Item or null
 
-        itemRepository.save(newItem);
+        Item createdItem = itemRepository.save(newItem);
+        return getGeoJSON(createdItem);
     }
 }
