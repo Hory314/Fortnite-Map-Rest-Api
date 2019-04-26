@@ -405,24 +405,17 @@ function addContextMenu(elementId, leafletMap)
     /* ELEMENTS */
     let map = $(`#${elementId}`);
     let newPointDiv = $("div#new-point");
+    let crosshair = $("#crosshair");
     let cancelBtn = newPointDiv.find(".close-btn");
     let form = newPointDiv.find("form");
 
     /* INIT */
     // FIXME: .css to stylesheet file
-    let menu = $("<div id='map-menu'>");
-    menu.css("min-width", "200px");
-    menu.css("background-color", "#FFF");
-    menu.css("display", "none");
-    menu.css("position", "relative");
-    menu.css("z-index", "2000");
-    menu.css("box-shadow", "rgba(187, 187, 187, 0.8) 2px 2px 3px 0px");
+    let menu = $("#map-menu");
 
-    let addAnchor = $(`<a href='#'>Add point</a>`);
+    let addAnchor = $(`<a href='#'>Add point</a>`); // menu's 1st option
     addAnchor.css("display", "block");
-
     menu.append(addAnchor);
-    map.append(menu);
 
     // init select options
     for (let item in ITEMS)
@@ -439,11 +432,19 @@ function addContextMenu(elementId, leafletMap)
     map.on("contextmenu", (e) =>
     {
         e.preventDefault(); // disable right-click context menu
-        menu.css("top", e.pageY);
-        menu.css("left", e.pageX);
-        // TODO: menu is partially hidden if user clicked near to right side of the screen
-        // TODO: show special pointer after click
-        menu.css("display", "inline-block");
+        let menuWidth = menu.outerWidth(true); // full computed with include margin(true)
+        let menuHeight = menu.outerHeight(true); // full computed with include margin(true)
+        let clientWidth = $(window).width();
+        let clientHeight = $(window).height();
+
+        menu.css("left", e.pageX > clientWidth - menuWidth ? clientWidth - menuWidth : e.pageX); // move if to close to the edge
+        menu.css("top", e.pageY > clientHeight - menuHeight ? clientHeight - menuHeight : e.pageY); // move if to close to the bottom
+        menu.css("display", "inline-block"); // show menu
+
+        crosshair.css("left", e.pageX); // place crosshair on click point
+        crosshair.css("top", e.pageY);
+        crosshair.css("display", "block");
+
 
         let latlng = leafletMap.mouseEventToLatLng(e.originalEvent);
         newPoint = [Math.round(latlng.lat * 1000000) / 1000000, Math.round(latlng.lng * 1000000) / 1000000];
@@ -470,6 +471,9 @@ function addContextMenu(elementId, leafletMap)
     map.on("mousedown wheel", () =>
     {
         menu.css("display", "none"); // hide menu on dragging or scrolling
+        crosshair.css("display", "none"); // hide crosshair as well
+        newPointDiv.css("right", "-285px"); // hide form div
+        form.find("select option:first-of-type").prop("selected", true); // select empty option if div closed
     });
 
     cancelBtn.on("click", (e) =>
@@ -506,9 +510,20 @@ function addContextMenu(elementId, leafletMap)
             data: JSON.stringify(chestData),
             dataType: "json",
             contentType: "application/json"
-        }); // TODO: .done .fail
-
-        // TODO: hide form after submit
+        })
+            .done(function () //FIXME: .done doesn't work (POST is sent correctly, but always .fail is fired
+            { // success
+                // TODO: show new point on map (grayed out)
+            })
+            .fail(function ()
+            { // fail
+                // TODO: some info cause of fail
+            })
+            .always(function ()
+            { // finally
+                crosshair.css("display", "none"); // hide crosshair
+                newPointDiv.css("right", "-285px"); // hide form div
+            });
     });
 }
 
