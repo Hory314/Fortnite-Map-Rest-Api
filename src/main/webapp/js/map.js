@@ -410,7 +410,6 @@ function addContextMenu(elementId, leafletMap)
     let form = newPointDiv.find("form");
 
     /* INIT */
-    // FIXME: .css to stylesheet file
     let menu = $("#map-menu");
 
     let addAnchor = $(`<a href='#'>Add point</a>`); // menu's 1st option
@@ -504,7 +503,7 @@ function addContextMenu(elementId, leafletMap)
             itemURL = "#"; // TODO: better url correctness check?
         }
 
-        $.ajax({ // FIXME: OPTIONS method request while sending post (only in IDE debug plugin...)
+        $.ajax({ // FIXME: OPTIONS method request while sending post (only in IDE debug plugin, so?...)
             url: API_URL + itemURL,
             type: "POST",
             data: JSON.stringify(itemData),
@@ -519,8 +518,26 @@ function addContextMenu(elementId, leafletMap)
             .fail(function (xhr, textStatus, errorThrown)
             { // fail
                 let errorJSON = JSON.parse(xhr.responseText);
-                alert(`Error occurred: ${errorJSON["status"]} ${errorJSON["error"]}\n${errorThrown}`);
-                // TODO: make better info
+                let errorMsg;
+                if (errorJSON["status"] === undefined)
+                {
+                    errorMsg = `${errorThrown}`;
+                }
+                else
+                {
+                    errorMsg = `Error occurred: ${errorJSON["status"]} ${errorJSON["error"]}<br>${errorThrown}`;
+                }
+
+                let errorBox = $("#error-box");
+
+                if (errorBox.css("display") === "none")
+                {
+                    errorBox.html(errorMsg).fadeIn(1000);
+                    setTimeout(() =>
+                    {
+                        errorBox.fadeOut(4000);
+                    }, 6000); // show opacity 1.0 for 5s (+1s from fadeIn)
+                }
             })
             .always(function ()
             { // finally

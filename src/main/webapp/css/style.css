@@ -146,3 +146,19 @@ html, body, #fnbr_map {
     top: -1px;
     border-top: 2px solid red;
 }
+
+#error-box {
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: 10000;
+    background-color: #000;
+    color: #FFF;
+    display: none;
+    border: 1px solid orange;
+    border-radius: 5px;
+    padding: 10px 35px;
+    text-align: center;
+    top: 25px;
+    max-width: 50%;
+}
