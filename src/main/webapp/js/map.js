@@ -352,13 +352,17 @@ function addJsonToOverlays(map)
     for (let item in ITEMS)
     {
         let newItemOverlay = L.layerGroup();
-        ajax(API_URL + ITEMS[item]['url'], 'GET', function (geoJson)
-        {
-            L.geoJSON(geoJson, {
-                pointToLayer: (geoJsonPoint, latlng) => L.marker(latlng, {icon: ITEMS[item]["icon"]}),
-                style: () => ITEMS[item]["options"]
-            }).addTo(newItemOverlay);
-        });
+        $.ajax({
+            url: API_URL + ITEMS[item]['url'],
+            type: 'GET'
+        })
+            .done(function (geoJson)
+            {
+                L.geoJSON(geoJson, {
+                    pointToLayer: (geoJsonPoint, latlng) => L.marker(latlng, {icon: ITEMS[item]["icon"]}),
+                    style: () => ITEMS[item]["options"]
+                }).addTo(newItemOverlay);
+            });
 
         if (first) // check 1st layer by default
         {
@@ -370,18 +374,6 @@ function addJsonToOverlays(map)
     }
 
     return overlays;
-}
-
-function ajax(url, method, successFunction)
-{
-    $.ajax({
-        url: url,
-        type: method
-    })
-        .done(function (data)
-        {
-            successFunction(data);
-        });
 }
 
 function customizeLayersBox(map, overlays)
@@ -421,7 +413,7 @@ function addContextMenu(elementId, leafletMap)
     {
         form.find("select")
             .append(
-                $(`<option value="${ITEMS[item]["url"]}">`).text(ITEMS[item]["name"])
+                $(`<option value="${ITEMS[item]["url"]}">`).attr("data-item-type", item).text(ITEMS[item]["name"])
             );
     }
 
@@ -491,12 +483,6 @@ function addContextMenu(elementId, leafletMap)
             link: null
         };
 
-        // $.post(API_URL + ITEMS["chest"]["url"], JSON.stringify(chestData), () =>
-        // {
-        //     alert("ok");
-        //     console.log("okokok");
-        // }, "json");
-
         let itemURL = form.find("select option:selected").attr("value");
         if (itemURL === undefined)
         {
@@ -510,10 +496,23 @@ function addContextMenu(elementId, leafletMap)
             dataType: "json", // must be text if POST doesn't return json
             contentType: "application/json"
         })
-            .done(function ()
+            .done(function (geoJson)
             { // success
-                alert("success!!!!!!!!!!!!!!!!!!!!!!");
-                // TODO: show new point on map (grayed out)
+                console.log("success");
+                let itemType = form.find("select option:selected").attr("data-item-type");
+
+                L.geoJSON(geoJson, {
+                    pointToLayer: (geoJsonPoint, latlng) => L.marker(latlng, {
+                        icon: L.icon({
+                            iconUrl: ITEMS[itemType]["icon"]["options"]["iconUrl"],
+                            iconSize: ITEMS[itemType]["icon"]["options"]["iconSize"],
+                            iconAnchor: ITEMS[itemType]["icon"]["options"]["iconAnchor"],
+                            popupAnchor: ITEMS[itemType]["icon"]["options"]["popupAnchor"],
+                            className: "grayed-out"
+                        })
+                    }),
+                    style: () => ITEMS[itemType]["options"]
+                }).addTo(leafletMap);
             })
             .fail(function (xhr, textStatus, errorThrown)
             { // fail

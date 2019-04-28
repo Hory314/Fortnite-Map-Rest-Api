@@ -162,3 +162,8 @@ html, body, #fnbr_map {
     top: 25px;
     max-width: 50%;
 }
+
+.grayed-out
+{
+    filter: grayscale(100%);
+}
