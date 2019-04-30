@@ -400,6 +400,7 @@ function addContextMenu(elementId, leafletMap)
     let crosshair = $("#crosshair");
     let cancelBtn = newPointDiv.find(".close-btn");
     let form = newPointDiv.find("form");
+    let infoBox = $("#error-box");
 
     /* INIT */
     let menu = $("#map-menu");
@@ -484,9 +485,10 @@ function addContextMenu(elementId, leafletMap)
         };
 
         let itemURL = form.find("select option:selected").attr("value");
-        if (itemURL === undefined)
+        if (itemURL === undefined || itemURL === "")
         {
-            itemURL = "#"; // TODO: better url correctness check?
+            showInfo(infoBox,"Error: Please select item type");
+            return;
         }
 
         $.ajax({ // FIXME: OPTIONS method request while sending post (only in IDE debug plugin, so?...)
@@ -527,16 +529,7 @@ function addContextMenu(elementId, leafletMap)
                     errorMsg = `Error occurred: ${errorJSON["status"]} ${errorJSON["error"]}<br>${errorThrown}`;
                 }
 
-                let errorBox = $("#error-box");
-
-                if (errorBox.css("display") === "none")
-                {
-                    errorBox.html(errorMsg).fadeIn(1000);
-                    setTimeout(() =>
-                    {
-                        errorBox.fadeOut(4000);
-                    }, 6000); // show opacity 1.0 for 5s (+1s from fadeIn)
-                }
+                showInfo(infoBox, errorMsg);
             })
             .always(function ()
             { // finally
@@ -544,6 +537,19 @@ function addContextMenu(elementId, leafletMap)
                 newPointDiv.css("right", "-285px"); // hide form div
             });
     });
+
+    /* FUNCTIONS */
+    function showInfo(element, msg)
+    {
+        if (element.css("display") === "none")
+        {
+            element.html(msg).fadeIn(1000);
+            setTimeout(() =>
+            {
+                element.fadeOut(4000);
+            }, 6000); // show opacity 1.0 for 5s (+1s from fadeIn)
+        }
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () =>
