@@ -58,16 +58,6 @@ public class ItemService
         return getGeoJSON(items);
     }
 
-//    public void save() //test
-//    {
-//        Item item = new Item();
-//        item.setLat(new BigDecimal("123.123"));
-//        item.setLng(new BigDecimal("456.456"));
-//        item.setLocation(Location.TILTED_TOWERS);
-//        item.setType(Type.AMMO_BOX);
-//        itemRepository.save(item);
-//    }
-
     private ObjectNode getGeoJSON(List<Item> items)
     {
         ObjectNode geoJSON = new ObjectMapper().createObjectNode();

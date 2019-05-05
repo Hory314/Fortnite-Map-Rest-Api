@@ -51,6 +51,7 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
             // X-Frame-Options config for static/specified sites
             http
                     .antMatcher("/reboot-vans/**")
+                    .antMatcher(("/**"))
                     .headers()
                     .frameOptions()
                     .disable();
@@ -74,6 +75,7 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
             //////*** PERMISSIONS CONFIG ***/////
             http.authorizeRequests()
                 .antMatchers("/api/**").permitAll()
+                .antMatchers("/**").permitAll()
                 // .anyRequest().authenticated()
 
                 //.and()
