@@ -30,9 +30,15 @@ public class ItemService
     @Autowired
     LocationService locationService;
 
-    public ObjectNode getItems(Type type)
+    public ObjectNode getAcceptedItems(Type type)
     {
-        List<Item> items = itemRepository.findItemsByType(type);
+        List<Item> items = itemRepository.findItemsByTypeAndAccepted(type, true);
+        return getGeoJSON(items);
+    }
+
+    public ObjectNode getAllItems() // all in one, for admin
+    {
+        List<Item> items = itemRepository.findAll();
         return getGeoJSON(items);
     }
 
@@ -58,7 +64,7 @@ public class ItemService
         return getGeoJSON(items);
     }
 
-    private ObjectNode getGeoJSON(List<Item> items)
+    private ObjectNode getGeoJSON(List<Item> items, boolean includeProperties)
     {
         ObjectNode geoJSON = new ObjectMapper().createObjectNode();
         ArrayNode features = geoJSON.put("type", "FeatureCollection")
@@ -68,7 +74,7 @@ public class ItemService
         {
             ObjectNode f = features.addObject();
             f.put("type", "Feature")
-             .putObject("properties");
+             .putObject("properties"); // TODO: put properties if flag is true
 
             ArrayNode coords = f.putObject("geometry")
                                 .put("type", "Point")
@@ -104,6 +110,11 @@ public class ItemService
         List<Item> i = new ArrayList<>();
         i.add(item);
         return getGeoJSON(i);
+    }
+
+    private ObjectNode getGeoJSON(List<Item> items)
+    {
+        return getGeoJSON(items, false);
     }
 
     public ObjectNode savePoint(NewItemDTO newItemDTO, Type type)

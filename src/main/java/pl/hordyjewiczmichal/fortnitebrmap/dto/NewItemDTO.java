@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class NewItemDTO
-{
+{ // TODO: validation
     private double lat = 0;
 
     private double lng = 0;

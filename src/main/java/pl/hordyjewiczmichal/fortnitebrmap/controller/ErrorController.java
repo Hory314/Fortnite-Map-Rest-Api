@@ -3,6 +3,7 @@ package pl.hordyjewiczmichal.fortnitebrmap.controller;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,10 +18,20 @@ public class ErrorController extends AbstractErrorController
     }
 
     @RequestMapping
-    public String handleError(HttpServletRequest request)
+    public String handleError(Model model, HttpServletRequest request)
     {
-        // getErrorAttributes(request, false).get("path").toString();
-        return "testerror";
+        String errorCode = "";
+        try
+        {
+            errorCode = super.getErrorAttributes(request, false).get("status").toString();
+        }
+        catch (Exception e)
+        {
+            // TODO: log
+        }
+
+        model.addAttribute("errorCode", errorCode + " ");
+        return "errors/error";
     }
 
     @Override

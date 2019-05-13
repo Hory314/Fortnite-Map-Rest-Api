@@ -51,7 +51,6 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
             // X-Frame-Options config for static/specified sites
             http
                     .antMatcher("/reboot-vans/**")
-                    .antMatcher(("/**"))
                     .headers()
                     .frameOptions()
                     .disable();
@@ -83,10 +82,10 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
                 //.loginPage("/login").permitAll()
 
                 .and()
-                .httpBasic();
+                .httpBasic()
 
-            http
-                    .csrf().disable(); // disable csrf
+                .and()
+                .csrf().disable(); // disable csrf
 
        /* http.authorizeRequests()
                 .antMatchers("/app/**").authenticated() // require login in this path
@@ -109,6 +108,4 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
                 .httpBasic();*/
         }
     }
-
-
 }

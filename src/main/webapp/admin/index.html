@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Fortnite Map</title>
+    <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+    <script src="vendor/leaflet/leaflet.js"></script>
+</head>
+<body>
+<div id="error-box"></div>
+<div id="new-point">
+    <div class="close-btn" title="Close">+</div>
+    <div class="clear-fix"></div>
+    <form>
+        <label>X:
+            <input type="text" value="" readonly disabled>
+        </label><br>
+        <label>Y:
+            <input type="text" value="" readonly disabled>
+        </label><br>
+        <label>Item type:
+            <select>
+                <option selected>[select item type...]</option>
+            </select>
+        </label>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<div id="fnbr_map">
+    <div id="map-menu"></div>
+    <div id="crosshair">
+        <div class="crosshair-top"></div>
+        <div class="crosshair-right"></div>
+        <div class="crosshair-bottom"></div>
+        <div class="crosshair-left"></div>
+        <div class="crosshair-center"></div>
+    </div>
+</div>
+<script src="vendor/jquery/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="js/map.js"></script>
+</body>
+</html>

@@ -1,22 +1,21 @@
 package pl.hordyjewiczmichal.fortnitebrmap.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/")
 public class HomeController
 {
-    @GetMapping
+    @RequestMapping
     public String home()
     {
-        return "test";
+        return "home";
     }
 
-    @GetMapping("/reboot-vans")
+    @RequestMapping("/reboot-vans")
     public String getRebootVans()
     {
-        return "test";
+        return "reboot-vans";
     }
 }

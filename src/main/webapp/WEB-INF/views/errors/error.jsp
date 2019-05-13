@@ -4,6 +4,6 @@
     <title>Title</title>
 </head>
 <body>
-heloł im jsp
+<h1 style="color: red;">Sorry, error ${errorCode}occurred.</h1>
 </body>
 </html>

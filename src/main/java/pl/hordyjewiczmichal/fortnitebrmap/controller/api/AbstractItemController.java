@@ -27,9 +27,9 @@ public abstract class AbstractItemController
 
     /* GET MAPPINGS */
     @GetMapping
-    protected ObjectNode getAll()
+    protected ObjectNode getAllAccepted()
     {
-        return itemService.getItems(getType());
+        return itemService.getAcceptedItems(getType());
     }
 
     @GetMapping("/{location:.+}")

@@ -12,7 +12,9 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long>
 {
-    List<Item> findItemsByType(Type type);
+    List<Item> findItemsByTypeAndAccepted(Type type, Boolean accepted);
+
+    List<Item> findAll();
 
     List<Item> findByTypeAndLocation(Type type, Location location);
 
