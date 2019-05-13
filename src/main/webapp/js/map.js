@@ -1,7 +1,16 @@
 const ELEMENT_ID = "fnbr_map";
-const MAP_VERSION = "8.20";
+const MAP_VERSION = "9.00";
+const TILE_MAP_URL_TEMPLATE = "{z}/{x}/{y}.jpg";
 const API_URL = "http://localhost:8080/api/";
 // const API_URL = "api/";
+const MAP_WIDTH = 2500;
+const MAP_HEIGHT = 2500;
+const MAP_SCALE_FIX = 120;
+const MAP_BOUNDS = [[-MAP_HEIGHT / 2 - MAP_SCALE_FIX / 2, -MAP_WIDTH / 2 - MAP_SCALE_FIX / 2], [MAP_HEIGHT / 2 + MAP_SCALE_FIX / 2, MAP_WIDTH / 2 + MAP_SCALE_FIX / 2]];
+const MAX_ZOOM = 5;
+const MIN_ZOOM = 2;
+
+
 const ITEMS = // comment property to prevent showing it in layers
     {
         chest: {
@@ -257,10 +266,7 @@ const ITEMS = // comment property to prevent showing it in layers
             })
         }
     };
-const MAP_SHIFT = 70; // adjust this value to determine map center
-const MAP_WIDTH = 2500 + MAP_SHIFT;
-const MAP_HEIGHT = 2500 + MAP_SHIFT;
-const MAP_BOUNDS = [[(MAP_HEIGHT / -2) + MAP_SHIFT, (MAP_WIDTH / -2)], [(MAP_HEIGHT / 2) + MAP_SHIFT, (MAP_WIDTH / 2)]];
+
 
 function initMap(elementId)
 {
@@ -268,27 +274,74 @@ function initMap(elementId)
     let brMapEl = window.getComputedStyle(document.getElementById(elementId));
     let divHeight = brMapEl.height.replace("px", "").replace("%", "");
 
-    let battleRoyaleMap = L.map(elementId, {
-        crs: L.CRS.Simple,
-        minZoom: Math.log2(MAP_HEIGHT / divHeight) * (-1),
-        maxZoom: Math.log2(MAP_HEIGHT / divHeight) * (-1) + 4,
-        center: [0, 0],
-        zoom: Math.log2(MAP_HEIGHT / divHeight) * (-1),
-        maxBounds: MAP_BOUNDS,
-        zoomDelta: 0.25,
-        zoomSnap: 0,
-        wheelPxPerZoomLevel: 50,
-        wheelDebounceTime: 20,
-        attributionControl: false,
-        zoomControl: false,
-        // dragging: !L.Browser.mobile, // disable 1 finger map moving
-        zoomTouch: true
+    // define custom CRS for Fortnite map
+    let FortniteMapCRS = L.extend({}, L.CRS.Simple, {
+        projection: L.Projection.LonLat,
+        transformation: (function ()
+        {
+            return new L.Transformation(1 / (MAP_WIDTH + MAP_SCALE_FIX), 0.5, -1 / (MAP_HEIGHT + MAP_SCALE_FIX), 0.5)
+        }()),
+        scale: function (zoom)
+        {
+            return 256 * Math.pow(2, zoom);
+        }
     });
+
+    // let battleRoyaleMap = L.map(elementId, {
+    //     crs: L.CRS.Simple,
+    //     minZoom: Math.log2(MAP_HEIGHT / divHeight) * (-1),
+    //     maxZoom: Math.log2(MAP_HEIGHT / divHeight) * (-1) + 4,
+    //     center: [0, 0],
+    //     zoom: Math.log2(MAP_HEIGHT / divHeight) * (-1),
+    //     maxBounds: MAP_BOUNDS,
+    //     zoomDelta: 0.25,
+    //     zoomSnap: 0,
+    //     wheelPxPerZoomLevel: 50,
+    //     wheelDebounceTime: 20,
+    //     attributionControl: false,
+    //     zoomControl: false,
+    //     // dragging: !L.Browser.mobile, // disable 1 finger map moving
+    //     zoomTouch: true
+    // });
+
+    var battleRoyaleMap = L.map(elementId, {
+        crs: FortniteMapCRS,
+        maxBounds: MAP_BOUNDS,
+        zoomControl: false,
+        attributionControl: false,
+        // dragging: !L.Browser.mobile, // disable 1 finger map moving
+        zoomTouch: true,
+        renderer: L.svg({padding: 100}) // line, circles, rectangles etc. won't disappeared if out of sight
+    }).setView([0, 0], MIN_ZOOM);
+
 
     L.control.attribution({prefix: "&copy; <a>Hory314</a>", position: "bottomright"}).addTo(battleRoyaleMap);
 
-    // image file
-    L.imageOverlay(`images/maps/${MAP_VERSION}/full.jpg`, MAP_BOUNDS).addTo(battleRoyaleMap);
+    // map tiles
+    L.tileLayer(`images/maps/${MAP_VERSION}/` + TILE_MAP_URL_TEMPLATE, {
+        maxZoom: MAX_ZOOM,
+        minZoom: MIN_ZOOM,
+        tms: false,
+        noWrap: true,
+        bounds: MAP_BOUNDS, // unnecessary tiles are not loaded if bounds are set
+        keepBuffer: 32, // # of saved tiles (until zoom)
+        updateInterval: 50, // 50 ms, default 200 ms
+    }).addTo(battleRoyaleMap);
+
+    /*coords test*/
+    var popup = L.popup();
+
+    function onMapClick(e)
+    {
+        popup
+            .setLatLng(e.latlng)
+            .setContent("You clicked the map at " + e.latlng.toString())
+            .openOn(battleRoyaleMap);
+    }
+
+    battleRoyaleMap.on('click', onMapClick);
+
+    /**/
 
     return battleRoyaleMap;
 }
@@ -315,7 +368,7 @@ function initGridOverlay(map)
         L.polyline([L.latLng(i, -1250), L.latLng(i, 1250)], gridOptions).addTo(gridOverlay);
     }
 
-    // coordinates
+    // coordinates bars
     let coordsOptions =
         {
             color: 'rgb(41, 49, 69)',
@@ -324,19 +377,35 @@ function initGridOverlay(map)
             interactive: false,
             noClip: true
         };
-    L.rectangle([L.latLng(1250, -1250 - 35), L.latLng(1250 + 70 + 35, 1250)], coordsOptions).addTo(gridOverlay);
-    L.rectangle([L.latLng(1250, -1250 - 35), L.latLng(-1250 + 35, -1250 + 70 - 35)], coordsOptions).addTo(gridOverlay);
+    L.rectangle([L.latLng(1250, -1250 - 60), L.latLng(1250 + 60, 1250)], coordsOptions).addTo(gridOverlay);
+    L.rectangle([L.latLng(1250, -1250), L.latLng(-1250, -1250 - 60)], coordsOptions).addTo(gridOverlay);
 
     // A-J 1-10
     for (let i = -5; i < 5; i++)
     {
-        let divIconLetters = L.divIcon({className: 'coords-div-icon', html: ""});
-        let divIconNumbers = L.divIcon({className: 'coords-div-icon', html: ""});
+        let divIconLetters = L.divIcon({
+            className: 'coords-div-icon',
+            html: "",
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+        let divIconNumbers = L.divIcon({
+            className: 'coords-div-icon',
+            html: "",
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
 
         divIconLetters["options"]["html"] = String.fromCharCode(65 + i + 5);
-        L.marker([-5 * 250 * (-1) + 60, (i * 250) + 250 / 2], {icon: divIconLetters}).addTo(gridOverlay);
+        L.marker([-5 * 250 * (-1) + 20, (i * 250) + 250 / 2], {
+            icon: divIconLetters,
+            interactive: false
+        }).addTo(gridOverlay);
         divIconNumbers["options"]["html"] = i + 6;
-        L.marker([i * 250 * (-1) - 220 / 2, (-5 * 250) - 10], {icon: divIconNumbers}).addTo(gridOverlay);
+        L.marker([i * 250 * (-1) - 260 / 2, (-5 * 250) - 30], {
+            icon: divIconNumbers,
+            interactive: false
+        }).addTo(gridOverlay);
     }
 
     gridOverlay.addTo(map); // show grid by default
@@ -487,7 +556,7 @@ function addContextMenu(elementId, leafletMap)
         let itemURL = form.find("select option:selected").attr("value");
         if (itemURL === undefined || itemURL === "")
         {
-            showInfo(infoBox,"Error: Please select item type");
+            showInfo(infoBox, "Error: Please select item type");
             return;
         }
 
