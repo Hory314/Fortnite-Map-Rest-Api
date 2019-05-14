@@ -264,6 +264,16 @@ const ITEMS = // comment property to prevent showing it in layers
                 iconAnchor: [16, 24],
                 popupAnchor: [0, -16]
             })
+        },
+        fortbyte: {
+            url: "fortbytes",
+            name: "Fortbytes",
+            icon: L.icon({
+                iconUrl: 'images/icons/fortbyte.png',
+                iconSize: [32, 32],
+                iconAnchor: [16, 12],
+                popupAnchor: [0, -16]
+            })
         }
     };
 
@@ -428,8 +438,32 @@ function addJsonToOverlays(map)
             .done(function (geoJson)
             {
                 L.geoJSON(geoJson, {
-                    pointToLayer: (geoJsonPoint, latlng) => L.marker(latlng, {icon: ITEMS[item]["icon"]}),
-                    style: () => ITEMS[item]["options"]
+                    pointToLayer: (geoJsonPoint, latlng) =>
+                    {
+                        // console.log(geoJsonPoint.properties["number"]);
+                        return L.marker(latlng, {icon: ITEMS[item]["icon"]});
+                    },
+                    style: () => ITEMS[item]["options"],
+                    onEachFeature: (feature, layer) =>
+                    {
+                        // console.log(feature);
+                        // console.log(layer);
+                        if (feature.properties["number"] !== undefined)
+                        {
+                            console.log("dodaje number " + feature.properties["number"]);
+                            let divIconNumber = L.divIcon({
+                                className: 'number-div-icon',
+                                html: feature.properties["number"],
+                                iconSize: [32, 32],
+                                iconAnchor: [20, 7]
+                            });
+
+                            L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                                icon: divIconNumber,
+                                interactive: false
+                            }).addTo(newItemOverlay);
+                        }
+                    }
                 }).addTo(newItemOverlay);
             });
 
