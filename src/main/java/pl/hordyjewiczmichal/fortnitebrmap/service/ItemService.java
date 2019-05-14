@@ -39,7 +39,7 @@ public class ItemService
     public ObjectNode getAllItems() // all in one, for admin
     {
         List<Item> items = itemRepository.findAll();
-        return getGeoJSON(items);
+        return getGeoJSON(items, true);
     }
 
     public ObjectNode getItemsInLocation(Type type, String location) throws NotFoundException
@@ -73,8 +73,32 @@ public class ItemService
         items.forEach(item ->
         {
             ObjectNode f = features.addObject();
-            f.put("type", "Feature")
-             .putObject("properties"); // TODO: put properties if flag is true
+            f.put("type", "Feature");
+
+            ObjectNode propObj = f.putObject("properties");
+
+            if (includeProperties) // put extra properties for admin
+            {
+                propObj.put("id", item.getId());
+                propObj.put("type,", item.getType().toString());
+                propObj.put("accepted", item.getAccepted());
+                propObj.put("radius", item.getCircleRadius());
+                propObj.put("number", item.getNumber());
+                propObj.put("link_id", item.getLink() == null ? null : item.getLink().getId());
+                propObj.put("location_id", item.getLocation() == null ? null : item.getLocation().getId());
+            }
+            else // put public api properties
+            {
+                if (item.getCircleRadius() != null) // include radius if exists
+                {
+                    propObj.put("radius", item.getCircleRadius());
+                }
+
+                if (item.getNumber() != null) // include number if exists
+                {
+                    propObj.put("number", item.getNumber());
+                }
+            }
 
             ArrayNode coords = f.putObject("geometry")
                                 .put("type", "Point")
@@ -85,6 +109,7 @@ public class ItemService
         });
 
         // check if item is linked
+        // it's only line, so properties aren't needed
         items.forEach(item ->
         {
             if (item.getLink() != null)

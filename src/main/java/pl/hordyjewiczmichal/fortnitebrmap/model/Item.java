@@ -34,4 +34,9 @@ public class Item
 
     @OneToOne
     private Item link;
+
+    private Integer number;
+
+    @Column(columnDefinition = "DOUBLE(6,2) DEFAULT NULL", name = "circle_radius")
+    private Double circleRadius;
 }

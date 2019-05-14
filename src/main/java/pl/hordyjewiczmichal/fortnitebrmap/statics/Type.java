@@ -34,7 +34,8 @@ public enum Type
     VOLCANIC_VENT("Geyser"),
     TELEPORTER("Teleporter"), /* line! */
     ZIPLINE("Zipline"), /* line! */
-    REBOOT_VAN("Reboot Van");
+    REBOOT_VAN("Reboot Van"),
+    FORTBYTE("Fortbyte");
 
     @Getter
     private String friendlyName;
