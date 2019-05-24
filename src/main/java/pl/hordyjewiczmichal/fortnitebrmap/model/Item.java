@@ -39,4 +39,8 @@ public class Item
 
     @Column(columnDefinition = "DOUBLE(6,2) DEFAULT NULL", name = "circle_radius")
     private Double circleRadius;
+
+    @OneToOne
+    @JoinColumn(name = "description_id", unique = true)
+    private Description description;
 }

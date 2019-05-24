@@ -84,7 +84,7 @@ html, body, #fnbr_map {
     padding: 12px;
 }
 
-#new-point > .close-btn {
+.close-btn {
     background-color: rgba(255, 255, 255, 0);
     width: 30px;
     height: 30px;
@@ -187,8 +187,79 @@ html, body, #fnbr_map {
     max-width: 50%;
 }
 
+#info-box {
+    width: 400px;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 10000;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    bottom: 10px;
+    right: 10px;
+    font-family: "Arial", serif;
+    font-size: 16px;
+}
+
+#info-box > div:first-child /* icon + title/item type */
+{
+    background-color: rgb(98, 147, 197);
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    position: relative;
+    top: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    padding: 6px 10px 10px;
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: bolder;
+    color: #FFF;
+}
+
+#info-box > div:first-child > .close-btn {
+    top: 10px;
+    right: 0;
+    display: flex;
+    position: absolute;
+}
+
+#info-box > div:first-child > img /* icon */
+{
+    margin-right: 5px;
+}
+
+#info-box > div:nth-child(2) /* description + screenshot img wrapper */
+{
+    padding: 10px;
+    background-color: #FFF;
+    border-radius: inherit;
+    position: relative;
+}
+
+#info-box > div:nth-child(2) > span /* description text */
+{
+    text-align: justify;
+    display: inline-block;
+}
+
+#info-box > div:nth-child(2) > img /* screenshot img */
+{
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    width: 100%;
+    margin-top: 10px;
+}
+
 .grayed-out {
     filter: grayscale(100%);
+}
+
+.user-done {
+    opacity: 0.3;
 }
 
 .bg-spikes > div {
@@ -196,6 +267,13 @@ html, body, #fnbr_map {
     opacity: 0.67;
     position: absolute;
     background-size: cover;
+}
+
+/* Edge hack - clip-path works with svg and clipPath tags in Edge >= 75 */
+@supports (-ms-ime-align:auto) {
+    .bg-spikes > div {
+        display: none;
+    }
 }
 
 .bg-spikes > div:nth-child(1) {

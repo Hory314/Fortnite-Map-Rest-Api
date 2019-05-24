@@ -86,6 +86,7 @@ public class ItemService
                 propObj.put("number", item.getNumber());
                 propObj.put("link_id", item.getLink() == null ? null : item.getLink().getId());
                 propObj.put("location_id", item.getLocation() == null ? null : item.getLocation().getId());
+                propObj.put("description_id", item.getDescription() == null ? null : item.getDescription().getId());
             }
             else // put public api properties
             {
@@ -97,6 +98,13 @@ public class ItemService
                 if (item.getNumber() != null) // include number if exists
                 {
                     propObj.put("number", item.getNumber());
+                }
+
+                if (item.getNumber() != null) // include descriptions if exists
+                {
+                    ObjectNode descObj = propObj.putObject("descriptions");
+                    descObj.put("en", item.getDescription().getEn());
+                    descObj.put("pl", item.getDescription().getPl());
                 }
             }
 

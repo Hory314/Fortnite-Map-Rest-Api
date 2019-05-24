@@ -18,4 +18,10 @@ public class HomeController
     {
         return "reboot-vans";
     }
+
+    @RequestMapping("/fortbytes")
+    public String getFrotbytes()
+    {
+        return "fortbytes";
+    }
 }
