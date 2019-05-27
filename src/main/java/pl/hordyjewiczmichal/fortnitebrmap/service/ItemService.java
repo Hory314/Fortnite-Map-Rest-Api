@@ -14,6 +14,7 @@ import pl.hordyjewiczmichal.fortnitebrmap.repository.ItemRepository;
 import pl.hordyjewiczmichal.fortnitebrmap.repository.LocationRepository;
 import pl.hordyjewiczmichal.fortnitebrmap.statics.Type;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -29,6 +30,8 @@ public class ItemService
     LocationRepository locationRepository;
     @Autowired
     LocationService locationService;
+    @Autowired
+    HttpServletRequest request;
 
     public ObjectNode getAcceptedItems(Type type)
     {
@@ -84,12 +87,15 @@ public class ItemService
                 propObj.put("accepted", item.getAccepted());
                 propObj.put("radius", item.getCircleRadius());
                 propObj.put("number", item.getNumber());
+                propObj.put("image_url", item.getImageUrl());
                 propObj.put("link_id", item.getLink() == null ? null : item.getLink().getId());
                 propObj.put("location_id", item.getLocation() == null ? null : item.getLocation().getId());
                 propObj.put("description_id", item.getDescription() == null ? null : item.getDescription().getId());
             }
             else // put public api properties
             {
+                propObj.put("id", item.getId()); // include id
+
                 if (item.getCircleRadius() != null) // include radius if exists
                 {
                     propObj.put("radius", item.getCircleRadius());
@@ -100,11 +106,16 @@ public class ItemService
                     propObj.put("number", item.getNumber());
                 }
 
-                if (item.getNumber() != null) // include descriptions if exists
+                if (item.getDescription() != null) // include descriptions if exists
                 {
                     ObjectNode descObj = propObj.putObject("descriptions");
                     descObj.put("en", item.getDescription().getEn());
                     descObj.put("pl", item.getDescription().getPl());
+                }
+
+                if (item.getImageUrl() != null) // include image url
+                {
+                    propObj.put("image_url", "http://" + request.getHeader("host") + "/" + item.getImageUrl());
                 }
             }
 

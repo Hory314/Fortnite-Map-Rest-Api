@@ -43,4 +43,7 @@ public class Item
     @OneToOne
     @JoinColumn(name = "description_id", unique = true)
     private Description description;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 }

@@ -187,7 +187,7 @@ html, body, #fnbr_map {
     max-width: 50%;
 }
 
-#info-box {
+#popup {
     width: 400px;
     position: fixed;
     background-color: rgba(0, 0, 0, 0);
@@ -199,9 +199,10 @@ html, body, #fnbr_map {
     right: 10px;
     font-family: "Arial", serif;
     font-size: 16px;
+    display: none;
 }
 
-#info-box > div:first-child /* icon + title/item type */
+#popup > div:first-child /* icon + title/item type */
 {
     background-color: rgb(98, 147, 197);
     display: flex;
@@ -217,21 +218,29 @@ html, body, #fnbr_map {
     font-size: 20px;
     font-weight: bolder;
     color: #FFF;
+    text-transform: uppercase;
 }
 
-#info-box > div:first-child > .close-btn {
+#popup > div:first-child > .close-btn {
     top: 10px;
     right: 0;
     display: flex;
     position: absolute;
 }
 
-#info-box > div:first-child > img /* icon */
+#popup form /* completion checkbox */
+{
+    position: absolute;
+    right: 40px;
+}
+
+
+#popup > div:first-child > img /* icon */
 {
     margin-right: 5px;
 }
 
-#info-box > div:nth-child(2) /* description + screenshot img wrapper */
+#popup > div:nth-child(2) /* description + screenshot img wrapper */
 {
     padding: 10px;
     background-color: #FFF;
@@ -239,13 +248,13 @@ html, body, #fnbr_map {
     position: relative;
 }
 
-#info-box > div:nth-child(2) > span /* description text */
+#popup > div:nth-child(2) > span /* description text */
 {
     text-align: justify;
     display: inline-block;
 }
 
-#info-box > div:nth-child(2) > img /* screenshot img */
+#popup > div:nth-child(2) > img /* screenshot img */
 {
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
@@ -258,7 +267,7 @@ html, body, #fnbr_map {
     filter: grayscale(100%);
 }
 
-.user-done {
+.completed {
     opacity: 0.3;
 }
 

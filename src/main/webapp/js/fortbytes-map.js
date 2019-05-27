@@ -9,6 +9,8 @@ const MAP_SCALE_FIX = 120;
 const MAP_BOUNDS = [[-MAP_HEIGHT / 2 - MAP_SCALE_FIX / 2, -MAP_WIDTH / 2 - MAP_SCALE_FIX / 2], [MAP_HEIGHT / 2 + MAP_SCALE_FIX / 2, MAP_WIDTH / 2 + MAP_SCALE_FIX / 2]];
 const MAX_ZOOM = 5;
 const MIN_ZOOM = 2;
+var lastClickedMarker;
+var lastNumber;
 
 
 const ITEMS = // comment property to prevent showing it in layers
@@ -17,7 +19,7 @@ const ITEMS = // comment property to prevent showing it in layers
         //     url: "chests",
         //     name: "Chests",
         //     icon: L.icon({
-        //         iconUrl: 'images/icons/chest.png',
+        //         iconUrl: '../images/icons/chest.png',
         //         iconSize: [32, 32],
         //         iconAnchor: [16, 16],
         //         popupAnchor: [0, -16]
@@ -267,7 +269,7 @@ const ITEMS = // comment property to prevent showing it in layers
         // },
         fortbyte: {
             url: "fortbytes",
-            name: "Fortbytes",
+            name: "Fortbyte",
             icon: L.icon({
                 iconUrl: '../images/icons/fortbyte.png',
                 iconSize: [32, 32],
@@ -438,10 +440,51 @@ function addJsonToOverlays(map)
             .done(function (geoJson)
             {
                 L.geoJSON(geoJson, {
-                    pointToLayer: (geoJsonPoint, latlng) =>
+                    pointToLayer: (feature, latlng) =>
                     {
-                        // console.log(geoJsonPoint.properties["number"]);
-                        return L.marker(latlng, {icon: ITEMS[item]["icon"]});
+                        let newMarker = L.marker(latlng, {icon: ITEMS[item]["icon"]});
+
+                        newMarker.on("click", () =>
+                        {
+                            let popup = $("#popup");
+                            popup.css("display", "block"); // display popup on click
+                            popup.find("div:nth-child(2) span").text(""); // reset desc
+                            popup.find("div:nth-child(2) img").attr("src", ""); // reset image
+
+                            popup.find("div:first-child img").attr("src", ITEMS[item]["icon"]["options"]["iconUrl"]); // set icon
+
+                            let title;
+                            if (feature.properties["number"] !== undefined)  // define title
+                            {
+                                title = `#${feature.properties["number"]} ${ITEMS[item]["name"]}`;
+                            }
+                            else
+                            {
+                                title = `${ITEMS[item]["name"]}`;
+                            }
+                            popup.find("div:first-child span").text(title); // set title
+
+                            if (feature.properties["descriptions"] !== undefined) // set description
+                            {
+                                popup.find("div:nth-child(2) span").text(`${feature.properties["descriptions"]["en"]}`);
+                                popup.find("div:nth-child(2) span").css("display", "inline-block");
+                            }
+                            else
+                            {
+                                popup.find("div:nth-child(2) span").css("display", "none");
+                            }
+
+                            // set image
+                            popup.find("div:nth-child(2) img").attr("src", feature.properties["image_url"]);
+
+                            lastClickedMarker = newMarker;
+                            if (feature.properties["number"] !== undefined)
+                            {
+                                lastNumber = feature.properties["number"];
+                            }
+                        });
+
+                        return newMarker;
                     },
                     style: () => ITEMS[item]["options"],
                     onEachFeature: (feature, layer) =>
@@ -450,7 +493,6 @@ function addJsonToOverlays(map)
                         // console.log(layer);
                         if (feature.properties["number"] !== undefined)
                         {
-                            console.log("dodaje number " + feature.properties["number"]);
                             let divIconNumber = L.divIcon({
                                 className: 'number-div-icon',
                                 html: feature.properties["number"],
@@ -678,11 +720,25 @@ document.addEventListener("DOMContentLoaded", () =>
     // addContextMenu(ELEMENT_ID, battleRoyaleMap);
 
     /*to function...v*/
-    let infoBox = $("div#info-box");
+    let infoBox = $("div#popup");
     let closeBtn = infoBox.find(".close-btn");
     closeBtn.on("click", (e) =>
     {
         $(e.target).parent().parent().css("display", "none"); // hide div on close button click / $(this) doesn't work
+    });
+    let completionCheckbox = infoBox.find("form input[type=checkbox]");
+    completionCheckbox.on("change", function ()
+    {
+        if (this.checked)
+        {
+            $(`div .number-div-icon:contains(${lastNumber})`).addClass("completed");
+            lastClickedMarker.setOpacity(0.3);
+        }
+        else
+        {
+            $(`div .number-div-icon:contains(${lastNumber})`).removeClass("completed");
+            lastClickedMarker.setOpacity(1.0);
+        }
     });
 
 });
