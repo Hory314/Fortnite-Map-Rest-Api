@@ -279,6 +279,26 @@ const ITEMS = // comment property to prevent showing it in layers
         }
     };
 
+function setCookie(cname, cvalue, exdays)
+{
+    let d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + "; " + expires + "; path=/";
+}
+
+function getCookie(cname)
+{
+    let name = cname + "=";
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++)
+    {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1);
+        if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
+    }
+    return "";
+}
 
 function initMap(elementId)
 {
@@ -442,16 +462,34 @@ function addJsonToOverlays(map)
                 L.geoJSON(geoJson, {
                     pointToLayer: (feature, latlng) =>
                     {
-                        let newMarker = L.marker(latlng, {icon: ITEMS[item]["icon"]});
+                        let newMarker = L.marker(latlng, {
+                            icon: ITEMS[item]["icon"],
+                            id: feature.properties["id"],
+                            riseOnHover: true
+                        });
+
+                        // load opacities from cookie
+                        let completedCookie = getCookie("completed");
+
+                        let completedArray = [];
+                        if (completedCookie !== "") completedArray = JSON.parse(completedCookie);
+
+                        if ((completedArray.indexOf(newMarker["options"]["id"])) > -1)
+                        {
+                            newMarker.setOpacity(0.6);
+                        }
 
                         newMarker.on("click", () =>
                         {
                             let popup = $("#popup");
+                            let completionCheckbox = popup.find("form input[type=checkbox]"); // checkbox el
                             popup.css("display", "block"); // display popup on click
                             popup.find("div:nth-child(2) span").text(""); // reset desc
                             popup.find("div:nth-child(2) img").attr("src", ""); // reset image
 
                             popup.find("div:first-child img").attr("src", ITEMS[item]["icon"]["options"]["iconUrl"]); // set icon
+
+                            completionCheckbox[0].checked = (completedArray.indexOf(feature.properties["id"])) > -1;  // check checkbox if id present in cookie
 
                             let title;
                             if (feature.properties["number"] !== undefined)  // define title
@@ -504,6 +542,17 @@ function addJsonToOverlays(map)
                                 icon: divIconNumber,
                                 interactive: false
                             }).addTo(newItemOverlay);
+
+                            // load opacities from cookie
+                            let completedCookie = getCookie("completed");
+
+                            let completedArray = [];
+                            if (completedCookie !== "") completedArray = JSON.parse(completedCookie);
+
+                            if ((completedArray.indexOf(feature.properties["id"])) > -1)
+                            {
+                                $(`div .number-div-icon:contains(${feature.properties["number"]})`).addClass("completed");
+                            }
                         }
                     }
                 }).addTo(newItemOverlay);
@@ -731,14 +780,45 @@ document.addEventListener("DOMContentLoaded", () =>
     {
         if (this.checked)
         {
+            // lower marker opacity
             $(`div .number-div-icon:contains(${lastNumber})`).addClass("completed");
-            lastClickedMarker.setOpacity(0.3);
+            lastClickedMarker.setOpacity(0.6);
+
+            // add/update cookie
+            let completedCookie = getCookie("completed");
+
+            let completedArray = [];
+            if (completedCookie !== "") completedArray = JSON.parse(completedCookie);
+
+            for (let i of completedArray) // check id exist already in cookie
+            {
+                if (i === lastClickedMarker["options"]["id"])
+                {
+                    return; // nothing to do if exist
+                }
+            }
+            completedArray.push(lastClickedMarker["options"]["id"]);
+            setCookie("completed", JSON.stringify(completedArray), 180)
         }
         else
         {
+            // set normal marker opacity
             $(`div .number-div-icon:contains(${lastNumber})`).removeClass("completed");
             lastClickedMarker.setOpacity(1.0);
+
+            // remove id from cookie
+            let completedCookie = getCookie("completed");
+
+            let completedArray = [];
+            if (completedCookie !== "") completedArray = JSON.parse(completedCookie);
+
+            // remove all elements with given id
+            let index;
+            while ((index = completedArray.indexOf(lastClickedMarker["options"]["id"])) > -1)
+            {
+                completedArray.splice(index, 1);
+            }
+            setCookie("completed", JSON.stringify(completedArray), 180)
         }
     });
-
 });
