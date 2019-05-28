@@ -488,7 +488,16 @@ function addJsonToOverlays(map)
                             popup.find("div:nth-child(2) img").attr("src", ""); // reset image
 
                             popup.find("div:first-child img").attr("src", ITEMS[item]["icon"]["options"]["iconUrl"]); // set icon
+                            if (lastClickedMarker !== undefined)
+                            {
+                                $(lastClickedMarker.getElement()).removeClass("active"); // remove active class from last clicked marker
+                            }
+                            $(newMarker.getElement()).addClass("active"); // set clicked marker as active (pulse effect)
 
+                            let completedCookie = getCookie("completed"); // get cookie...
+
+                            let completedArray = [];
+                            if (completedCookie !== "") completedArray = JSON.parse(completedCookie); // ... and define array on every click
                             completionCheckbox[0].checked = (completedArray.indexOf(feature.properties["id"])) > -1;  // check checkbox if id present in cookie
 
                             let title;
@@ -513,7 +522,15 @@ function addJsonToOverlays(map)
                             }
 
                             // set image
-                            popup.find("div:nth-child(2) img").attr("src", feature.properties["image_url"]);
+                            popup.find("div:nth-child(2) img").attr("src", feature.properties["image_url"]); // setting blank is ok
+                            if (feature.properties["image_url"] === undefined) // but hide element then
+                            {
+                                popup.find("div:nth-child(2) img").css("display", "none");
+                            }
+                            else
+                            {
+                                popup.find("div:nth-child(2) img").css("display", "inline");
+                            }
 
                             lastClickedMarker = newMarker;
                             if (feature.properties["number"] !== undefined)
@@ -774,6 +791,7 @@ document.addEventListener("DOMContentLoaded", () =>
     closeBtn.on("click", (e) =>
     {
         $(e.target).parent().parent().css("display", "none"); // hide div on close button click / $(this) doesn't work
+        $(lastClickedMarker.getElement()).removeClass("active"); // remove active class from last clicked marker
     });
     let completionCheckbox = infoBox.find("form input[type=checkbox]");
     completionCheckbox.on("change", function ()

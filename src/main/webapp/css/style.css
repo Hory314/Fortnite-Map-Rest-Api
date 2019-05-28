@@ -6,6 +6,7 @@ body {
 html, body, #fnbr_map {
     height: 100%;
     width: 100vw;
+    overflow: hidden;
 }
 
 .leaflet-container {
@@ -289,6 +290,7 @@ label.css-label {
 {
     text-align: justify;
     display: inline-block;
+    margin-bottom: 10px;
 }
 
 #popup > div:nth-child(2) > img /* screenshot img */
@@ -297,7 +299,6 @@ label.css-label {
     -moz-border-radius: 4px;
     border-radius: 4px;
     width: 100%;
-    margin-top: 10px;
     cursor: pointer;
 }
 
@@ -372,4 +373,36 @@ label.css-label {
     left: 50px;
     -webkit-clip-path: polygon(0% 100%, 35% 100%, 100% 0%);
     clip-path: polygon(0% 100%, 35% 100%, 100% 0%);
+}
+
+#left-menu
+{
+    left: 0;
+    position: fixed;
+    width: calc(400px - 24px);
+    /*height: calc(100% - 24px);*/
+    height: 100%;
+    background-color: navy;
+    /*right: -285px;*/
+    z-index: 2100;
+    transition: left 0.5s ease 0s;
+    box-shadow: rgba(187, 187, 187, 0.8) -20px 0 20px 0;
+    padding: 12px;
+}
+
+@keyframes shadow-pulse
+{
+    0% {
+        box-shadow: 0 0 0 0px rgba(225,126,232, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 0 25px rgba(0, 0, 0, 0);
+    }
+}
+
+.active
+{
+    animation: shadow-pulse 2s infinite;
+    border-radius: 100%;
+    filter: contrast(200%);
 }
