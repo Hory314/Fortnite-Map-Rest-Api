@@ -300,6 +300,28 @@ function getCookie(cname)
     return "";
 }
 
+function recalculateProgress()
+{
+    // load cookie
+    let completedCookie = getCookie("completed");
+
+    let completedArray = [];
+    if (completedCookie !== "") completedArray = JSON.parse(completedCookie);
+    completedArray = completedArray.filter((el, i, arr) => arr.indexOf(el) === i);
+
+    // remaining fortbytes cookie
+    let remainingCookie = getCookie("remaining_fortbytes");
+
+    let remainingArray = [];
+    if (remainingCookie !== "") remainingArray = JSON.parse(remainingCookie);
+    remainingArray = remainingArray.filter((el, i, arr) => arr.indexOf(el) === i);
+
+    let progress = ((completedArray.length + remainingArray.length) * 100 / 100) + "%";
+
+    $(".progress-bar div:nth-child(1) > span").text(progress);
+    $(".progress-bar div:nth-child(2) > div").css("width", progress);
+}
+
 function initMap(elementId)
 {
     /* calculate divHeight for map initial zoom */
@@ -544,8 +566,6 @@ function addJsonToOverlays(map)
                     style: () => ITEMS[item]["options"],
                     onEachFeature: (feature, layer) =>
                     {
-                        // console.log(feature);
-                        // console.log(layer);
                         if (feature.properties["number"] !== undefined)
                         {
                             let divIconNumber = L.divIcon({
@@ -711,7 +731,6 @@ function addContextMenu(elementId, leafletMap)
         })
             .done(function (geoJson)
             { // success
-                console.log("success");
                 let itemType = form.find("select option:selected").attr("data-item-type");
 
                 L.geoJSON(geoJson, {
@@ -838,5 +857,6 @@ document.addEventListener("DOMContentLoaded", () =>
             }
             setCookie("completed", JSON.stringify(completedArray), 180)
         }
+        recalculateProgress();
     });
 });
