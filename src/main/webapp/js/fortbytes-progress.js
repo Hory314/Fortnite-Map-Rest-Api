@@ -75,8 +75,5 @@ document.addEventListener("DOMContentLoaded", () =>
         }
     });
 
-    // on left-menu checkbox change (set/remove another cookie)
     leftMenu.find(".fortbyte-no form input[type=checkbox]").on("change", toggleFortbyteIdInCookie);
-
-// TODO: continue work on progress bar
 });

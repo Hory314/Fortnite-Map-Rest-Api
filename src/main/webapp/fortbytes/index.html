@@ -10,11 +10,31 @@
     <script src="../vendor/jquery/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="../js/fortbytes-map.js"></script>
     <script type="text/javascript" src="../js/fortbytes-progress.js"></script>
+    <script type="text/javascript" src="../js/background-control.js"></script>
     <link href="../vendor/lity/lity.min.css" rel="stylesheet">
     <script src="../vendor/lity/lity.min.js"></script>
 </head>
 <body>
+<div id="settings" class="lity-hide">
+<!--<div id="settings">-->
+    <div>Background color:</div>
+    <div class="bg-common"><span>Common</span></div>
+    <div class="bg-uncommon"><span>Uncommon</span></div>
+    <div class="bg-rare"><span>Rare</span></div>
+    <div class="bg-epic"><span>Epic</span></div>
+    <div class="bg-legendary"><span>Legendary</span></div>
+    <div class="bg-mythic"><span>Mythic</span></div>
+    <div class="bg-white"><span>White</span></div>
+    <div class="bg-black"><span>Black</span></div>
+    <div class="bg-gray"><span>Gray</span></div>
+    <div class="bg-light-gray"><span>Light&nbsp;Gray</span></div>
+</div>
 <div id="error-box"></div>
+<div class="leaflet-touch leaflet-control-layers leaflet-touch leaflet-bar cog">
+    <a href="#settings" data-lity>
+        <img alt="" title="Settings" src="../images/common/cogwheel-icon.png">
+    </a>
+</div>
 <div id="popup">
     <div>
         <img src="" alt=""><span></span>
@@ -228,7 +248,7 @@
         Nagroda za zdobycie 125 000 PD
     </div>
 </div>
-<div id="fnbr_map">
+<div id="fnbr_map" class="bg-light-gray">
     <div class="bg-spikes">
         <div></div>
         <div></div>

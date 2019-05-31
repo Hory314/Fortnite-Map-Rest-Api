@@ -612,7 +612,7 @@ function customizeLayersBox(map, overlays)
     let layersBox = L.control.layers({}, overlays, {collapsed: true}).addTo(map);
     let layersBoxEl = layersBox.getContainer();
     layersBoxEl.style.top = "23px";
-    layersBoxEl.style.right = "0px";
+    layersBoxEl.style.right = "65px";
 }
 
 function customizeZoomButton(map)
