@@ -20,7 +20,7 @@ public class HomeController
     }
 
     @RequestMapping("/fortbytes")
-    public String getFrotbytes()
+    public String getFortbytes()
     {
         return "fortbytes";
     }

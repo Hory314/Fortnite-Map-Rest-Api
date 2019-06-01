@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", () =>
             }
         }
 
+        // hit ESC key to close lightbox
         let ev = new KeyboardEvent('keydown', {
             altKey: false,
             bubbles: true,

@@ -16,10 +16,10 @@
 </head>
 <body>
 <div id="settings" class="lity-hide">
-<!--<div id="settings">-->
+    <!--<div id="settings">-->
     <div>Background color:</div>
-    <div class="bg-common"><span>Common</span></div>
-    <div class="bg-uncommon"><span>Uncommon</span></div>
+    <div class="bg-common"><span data-translate="bg-common">Common</span></div>
+    <div class="bg-uncommon"><span data-translate="bg-uncommon">Uncommon</span></div>
     <div class="bg-rare"><span>Rare</span></div>
     <div class="bg-epic"><span>Epic</span></div>
     <div class="bg-legendary"><span>Legendary</span></div>
@@ -28,6 +28,17 @@
     <div class="bg-black"><span>Black</span></div>
     <div class="bg-gray"><span>Gray</span></div>
     <div class="bg-light-gray"><span>Light&nbsp;Gray</span></div>
+</div>
+<div id="feedback" class="lity-hide">
+    <form>
+        <label>
+            <textarea data-translate="feedback" data-translate-placeholder name="feedback" placeholder="Feedback" required autofocus></textarea>
+        </label><br>
+        <label>
+            <input data-translate="opt-email" data-translate-placeholder name="email" placeholder="Email (optional)" type="email">
+        </label><br>
+        <input type="submit">
+    </form>
 </div>
 <div id="error-box"></div>
 <div class="leaflet-touch leaflet-control-layers leaflet-touch leaflet-bar cog">
@@ -45,7 +56,7 @@
         <img src="" alt="" data-lity>
         <form>Check if you have completed this task:
             <input id="completed-checkbox" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="completed-checkbox">Completed</label>
+            <label class="css-label" data-translate="task-done" for="completed-checkbox">Done</label>
         </form>
     </div>
 </div>
@@ -65,7 +76,7 @@
         <span>
         <form>
             <input id="fortbyte-1" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-1">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-1">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -76,7 +87,7 @@
         <span>
         <form>
             <input id="fortbyte-10" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-10">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-10">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -87,7 +98,7 @@
         <span>
         <form>
             <input id="fortbyte-25" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-25">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-25">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -98,7 +109,7 @@
         <span>
         <form>
             <input id="fortbyte-35" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-35">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-35">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -109,7 +120,7 @@
         <span>
         <form>
             <input id="fortbyte-39" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-39">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-39">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -120,7 +131,7 @@
         <span>
         <form>
             <input id="fortbyte-42" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-42">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-42">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -131,7 +142,7 @@
         <span>
         <form>
             <input id="fortbyte-44" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-44">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-44">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -142,7 +153,7 @@
         <span>
         <form>
             <input id="fortbyte-46" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-46">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-46">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -153,7 +164,7 @@
         <span>
         <form>
             <input id="fortbyte-57" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-57">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-57">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -164,7 +175,7 @@
         <span>
         <form>
             <input id="fortbyte-66" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-66">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-66">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -175,7 +186,7 @@
         <span>
         <form>
             <input id="fortbyte-71" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-71">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-71">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -186,7 +197,7 @@
         <span>
         <form>
             <input id="fortbyte-84" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-84">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-84">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -197,7 +208,7 @@
         <span>
         <form>
             <input id="fortbyte-85" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-85">Completed</label>
+            <label class="css-label" data-translate="task-done" data-translate="task-done" for="fortbyte-85">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -208,7 +219,7 @@
         <span>
         <form>
             <input id="fortbyte-87" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-87">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-87">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -219,7 +230,7 @@
         <span>
         <form>
             <input id="fortbyte-90" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-90">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-90">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -230,7 +241,7 @@
         <span>
         <form>
             <input id="fortbyte-96" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-96">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-96">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
@@ -241,14 +252,14 @@
         <span>
         <form>
             <input id="fortbyte-99" class="css-checkbox" type="checkbox">
-            <label class="css-label" for="fortbyte-99">Completed</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-99">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
         Nagroda za zdobycie 125 000 PD
     </div>
 </div>
-<div id="fnbr_map" class="bg-light-gray">
+<div id="fnbr_map" class="bg-rare">
     <div class="bg-spikes">
         <div></div>
         <div></div>
@@ -257,6 +268,17 @@
         <div></div>
         <div></div>
     </div>
+</div>
+<div id="cookies">
+    <span>
+        This site uses cookies to personalise content and adverts, and to analyse traffic. <button>OK</button>
+    </span>
+</div>
+<div id="locale">
+    <span id="flag-us"><img title="English" alt="en"
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAARCAYAAAA2cze9AAACeUlEQVQ4T6WUW2gTQRSG/+k2DUJFKjFQtTYJXpB6QbHY2lzb2gcvCIL4mJdCntIIIuSCGNBcQBBjRAykIIW8iAiG0oeKbS4tCj4Ealrog0lsH6qx2oKlki7rykx2KZpoFzownGH3zH++M3POEADkr4ltDhEAm1S4wTbw6OZe7e6Q0NDIiaIIQgiopUNeBzT5+jGpAnUlAOE4/GpSbawKCHaGb9+lv7gr10bWPbesTdnpTzD1tCM7XYKpR8es8ZwOoftpjMQvK0pIEATkcrlcf39/JxVv7Ls4zFuMepiNOmSmSjU2PVXEs66VuuJyZtTSQTNeK5VwdPixiol3257yfl8f0tkCrGYDUpk/7Z17bzD28roicuqUTCY/2+32NiZ+8myU77UYYLMYMJkuoNdqwERKsukCW7+yfKuK07uglNKd1EQkBN/n5nB69HmV/NDxB3zAfx4TqY8sQCpThNWsx2SmCBrU53+Ndym7YvJEIvFlaGhoPxPfdzDMyzsJCESIoJaBQsSxXQKenJHIa1E3y0Xa8TWfR9f0eJU8FAotDQ4OahSjbeEYj8eXPR5PKxNPd3TyrSdOKdNWcOZLMzlYZt9Xyb1eb9nlcrUoU9/aKxKJrAaDwT1MfLztCN8mk0vdxrqOtWjNkW5+qxeHAIszOQwszlfJnU7nis/na96aSZlHIBBYi0ajLUx8TNvOHzjcoWynXONSR9bUPSFYmP+AC+UFRs653e6sw+HoVqvVygL8x6tSqSAWi70Nh8Mm9iq+sF260VwsBH8ul9WCQEtePuh/HKr8DEp1LftznAo7NNrKut7gvTo5+lB+y5sA7KRZbBsdEAD8ALDxGxpy9UoFOcYRAAAAAElFTkSuQmCC"></span>
+    <span id="flag-pl"><img title="Polski" alt="pl"
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAARCAYAAAA2cze9AAAByUlEQVQ4T62UuUsDQRTGv1ljEO/7aGwElciSxBAWZCVFxDT+AyJWtgHBf0QkraWFvVXQFNFEWMO6CYtBBRsb7/tAMpqR2clKiFfQ/WB4w+68H29mvnkEAKkY+KcYAGtwsBSLxUZVVV0nhLQyxr//TYQQMMZu0+l0OBqNZjm8RtO0c5/P1+52u/9GLcsqFArIZrPXiqJ0c7hL0zTq8Xj+DbYB+XweiqLUWvBUKkVlWXYMbpomVFUV8GQySb1er2PwXC6HUCgk4IlEgvr9fsfghmEgHA4LeDwep4FAwDG4ruuIRCICfjQ9Tz/IxSIgSQCPXPacRy7uVJ71nWNL/wZWlwT8YHKWdo6rIpkQgHudx2pkry17H5ebWxhaXxFwMzhFOwLBUmUlcLWPqbIYxnBl6JB31gR8d3CcdvkFnICAgVlRnIKY81itLowMRg+3BDzTH6Q9PqXa3J/XEeDM0BA8zgj4dvcI7Rt2zi0n+zrGzvcseM1Gr3zXU9/RUN/Y9rmqygv75cKfH29w9nz1NHFqtlhdcaVdnmujj4vFl/uG1+Jrmd++8p7tw89uckkuSHXNT7euxoWZG3PZ7uW8HTbxXThw8G8AHgAU3gF8TqtKFjFe2wAAAABJRU5ErkJggg=="></span>
 </div>
 </body>
 </html>

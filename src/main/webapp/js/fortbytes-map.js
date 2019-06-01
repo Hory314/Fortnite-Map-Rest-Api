@@ -9,8 +9,10 @@ const MAP_SCALE_FIX = 120;
 const MAP_BOUNDS = [[-MAP_HEIGHT / 2 - MAP_SCALE_FIX / 2, -MAP_WIDTH / 2 - MAP_SCALE_FIX / 2], [MAP_HEIGHT / 2 + MAP_SCALE_FIX / 2, MAP_WIDTH / 2 + MAP_SCALE_FIX / 2]];
 const MAX_ZOOM = 5;
 const MIN_ZOOM = 2;
-var lastClickedMarker;
-var lastNumber;
+let errorBox; // init after DOM content loaded
+let locale = "en";
+let lastClickedMarker;
+let lastNumber;
 
 
 const ITEMS = // comment property to prevent showing it in layers
@@ -322,6 +324,18 @@ function recalculateProgress()
     $(".progress-bar div:nth-child(2) > div").css("width", progress);
 }
 
+function showInfo(element, msg)
+{
+    if (element.css("display") === "none")
+    {
+        element.html(msg).fadeIn(1000);
+        setTimeout(() =>
+        {
+            element.fadeOut(4000);
+        }, 6000); // show opacity 1.0 for 5s (+1s from fadeIn)
+    }
+}
+
 function initMap(elementId)
 {
     /* calculate divHeight for map initial zoom */
@@ -369,7 +383,14 @@ function initMap(elementId)
     }).setView([0, 0], MIN_ZOOM);
 
 
-    L.control.attribution({prefix: "&copy; <a>Hory314</a>", position: "bottomright"}).addTo(battleRoyaleMap);
+    L.control.attribution({
+        prefix: "&copy; <a style='cursor: default;'>Hory314</a>",
+        position: "bottomright"
+    }).addTo(battleRoyaleMap);
+    L.control.attribution({
+        prefix: "<a href='#feedback' data-lity>Feedback</a>",
+        position: "bottomright"
+    }).addTo(battleRoyaleMap);
 
     // map tiles
     L.tileLayer(`../images/maps/${MAP_VERSION}/` + TILE_MAP_URL_TEMPLATE, {
@@ -535,7 +556,7 @@ function addJsonToOverlays(map)
 
                             if (feature.properties["descriptions"] !== undefined) // set description
                             {
-                                popup.find("div:nth-child(2) span").text(`${feature.properties["descriptions"]["en"]}`);
+                                popup.find("div:nth-child(2) span").text(`${feature.properties["descriptions"][locale]}`);
                                 popup.find("div:nth-child(2) span").css("display", "inline-block");
                             }
                             else
@@ -631,7 +652,7 @@ function addContextMenu(elementId, leafletMap)
     let crosshair = $("#crosshair");
     let cancelBtn = newPointDiv.find(".close-btn");
     let form = newPointDiv.find("form");
-    let infoBox = $("#error-box");
+    // let errorBox = $("#error-box");
 
     /* INIT */
     let menu = $("#map-menu");
@@ -718,7 +739,7 @@ function addContextMenu(elementId, leafletMap)
         let itemURL = form.find("select option:selected").attr("value");
         if (itemURL === undefined || itemURL === "")
         {
-            showInfo(infoBox, "Error: Please select item type");
+            showInfo(errorBox, "Error: Please select item type");
             return;
         }
 
@@ -759,7 +780,7 @@ function addContextMenu(elementId, leafletMap)
                     errorMsg = `Error occurred: ${errorJSON["status"]} ${errorJSON["error"]}<br>${errorThrown}`;
                 }
 
-                showInfo(infoBox, errorMsg);
+                showInfo(errorBox, errorMsg);
             })
             .always(function ()
             { // finally
@@ -769,21 +790,66 @@ function addContextMenu(elementId, leafletMap)
     });
 
     /* FUNCTIONS */
-    function showInfo(element, msg)
+    // function showInfo(element, msg)
+    // {
+    //     if (element.css("display") === "none")
+    //     {
+    //         element.html(msg).fadeIn(1000);
+    //         setTimeout(() =>
+    //         {
+    //             element.fadeOut(4000);
+    //         }, 6000); // show opacity 1.0 for 5s (+1s from fadeIn)
+    //     }
+    // }
+}
+
+function translate(locale)
+{
+    const dictionary = {
+        "task-done": {
+            "en": "Done",
+            "pl": "Gotowe"
+        },
+        "bg-common": {
+            "en": "Common",
+            "pl": "Pospolite"
+        },
+        "bg-uncommon": {
+            "en": "Uncommon",
+            "pl": "Niepospolite"
+        },
+        "feedback": {
+            "en": "Feedback",
+            "pl": "Opinia"
+        },
+        "opt-email": {
+            "en": "Email (optional)",
+            "pl": "Email (niewymagany)"
+        },
+    }; // todo extend dictionary
+
+    let elementsToTranslete = $("[data-translate]");
+    for (let el of elementsToTranslete)
     {
-        if (element.css("display") === "none")
+        let tName = $(el).attr("data-translate");
+        if ($(el).text() !== "") $(el).text(dictionary[tName][locale]); // translate
+
+        for (let dataAttr in ($(el).data())) // find all data-translate-*
         {
-            element.html(msg).fadeIn(1000);
-            setTimeout(() =>
+            let attr = dataAttr.replace("translate", "").toLowerCase();
+            if (attr !== "")
             {
-                element.fadeOut(4000);
-            }, 6000); // show opacity 1.0 for 5s (+1s from fadeIn)
+                if ($(el).attr(attr) !== "") $(el).attr(attr, dictionary[tName][locale]);
+            }
         }
     }
 }
 
 document.addEventListener("DOMContentLoaded", () =>
 {
+    errorBox = $("#error-box"); // init error box
+    locale = getCookie("locale");
+
     /* init map */
     let battleRoyaleMap = initMap(ELEMENT_ID);
 
@@ -859,4 +925,90 @@ document.addEventListener("DOMContentLoaded", () =>
         }
         recalculateProgress();
     });
+
+    $("#feedback form").on("submit", (e) =>
+    {
+        e.preventDefault();
+
+        let feedback = $(e.target).find("*[name=feedback]");
+        let email = $(e.target).find("*[name=email]");
+
+        let formData = {
+            feedback: feedback.val(),
+            email: email.val()
+        };
+
+        $.ajax({
+            url: API_URL + "feedback",
+            type: "POST",
+            data: JSON.stringify(formData),
+            dataType: "text", // must be text if POST doesn't return json
+            contentType: "application/json"
+        })
+            .done(function (geoJson)
+            { // success
+                $(e.target)[0].reset(); // reset form
+                showInfo(errorBox, "Thank you for your feedback!")
+            })
+            .fail(function (xhr, textStatus, errorThrown)
+            { // fail
+                let errorJSON = JSON.parse(xhr.responseText);
+                let errorMsg;
+                if (errorJSON["status"] === undefined)
+                {
+                    errorMsg = `${errorThrown}`;
+                }
+                else
+                {
+                    errorMsg = `Feedback was not sent!<br>Error occurred: ${errorJSON["status"]} ${errorJSON["error"]}<br>${errorThrown}`;
+                }
+
+                showInfo(errorBox, errorMsg);
+            })
+            .always(function ()
+            { // finally hit ESC key to close lightbox
+                let ev = new KeyboardEvent('keydown', {
+                    altKey: false,
+                    bubbles: true,
+                    cancelBubble: false,
+                    cancelable: true,
+                    charCode: 0,
+                    code: "Esc",
+                    composed: true,
+                    ctrlKey: false,
+                    currentTarget: null,
+                    defaultPrevented: true,
+                    detail: 0,
+                    eventPhase: 0,
+                    isComposing: false,
+                    isTrusted: true,
+                    key: "Esc",
+                    keyCode: 27,
+                    location: 0,
+                    metaKey: false,
+                    repeat: false,
+                    returnValue: false,
+                    shiftKey: false,
+                    type: "keydown",
+                    which: 27
+                });
+
+                document.dispatchEvent(ev);
+            });
+    });
+
+    $("#cookies button").on("click", (e) =>
+    {
+        $(e.target).parent().parent().css("display", "none");
+        setCookie("c-policy", "accepted", 180);
+    });
+    if (getCookie("c-policy") === "accepted") $("#cookies").css("display", "none");
+
+    $("#locale img").on("click", (e) =>
+    {
+        setCookie("locale", $(e.target).attr("alt"), 180);
+        location.reload();
+    });
+
+    translate(locale); // show page in selected language
 });
