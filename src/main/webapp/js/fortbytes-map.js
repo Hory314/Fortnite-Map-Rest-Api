@@ -10,7 +10,7 @@ const MAP_BOUNDS = [[-MAP_HEIGHT / 2 - MAP_SCALE_FIX / 2, -MAP_WIDTH / 2 - MAP_S
 const MAX_ZOOM = 5;
 const MIN_ZOOM = 2;
 let errorBox; // init after DOM content loaded
-let locale = "en";
+let locale;
 let lastClickedMarker;
 let lastNumber;
 
@@ -848,7 +848,7 @@ function translate(locale)
 document.addEventListener("DOMContentLoaded", () =>
 {
     errorBox = $("#error-box"); // init error box
-    locale = getCookie("locale");
+    locale = getCookie("locale") || navigator.language || "en";
 
     /* init map */
     let battleRoyaleMap = initMap(ELEMENT_ID);
@@ -995,6 +995,12 @@ document.addEventListener("DOMContentLoaded", () =>
 
                 document.dispatchEvent(ev);
             });
+    });
+
+    // focus form on show
+    $("div.leaflet-control-attribution a[data-lity]").on("click", () =>
+    {
+        setTimeout(() => $("[name=feedback]").focus(), 0);
     });
 
     $("#cookies button").on("click", (e) =>

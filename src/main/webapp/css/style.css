@@ -654,6 +654,7 @@ label.css-label {
     font-family: inherit;
     font-size: inherit;
     border-radius: 5px;
+    outline: none;
 }
 
 #feedback input[type=email] {
@@ -663,6 +664,7 @@ label.css-label {
     font-family: inherit;
     font-size: inherit;
     border-radius: 5px;
+    outline: none;
 }
 
 #cookies
