@@ -9,10 +9,11 @@ const MAP_SCALE_FIX = 120;
 const MAP_BOUNDS = [[-MAP_HEIGHT / 2 - MAP_SCALE_FIX / 2, -MAP_WIDTH / 2 - MAP_SCALE_FIX / 2], [MAP_HEIGHT / 2 + MAP_SCALE_FIX / 2, MAP_WIDTH / 2 + MAP_SCALE_FIX / 2]];
 const MAX_ZOOM = 5;
 const MIN_ZOOM = 2;
+const languages = ["en", "pl"];
 let errorBox; // init after DOM content loaded
 let locale;
+let hideCompleted = false;
 let lastClickedMarker;
-let lastNumber;
 
 
 const ITEMS = // comment property to prevent showing it in layers
@@ -269,14 +270,25 @@ const ITEMS = // comment property to prevent showing it in layers
         //         popupAnchor: [0, -16]
         //     })
         // },
+        // fortbyte: {
+        //     url: "fortbytes",
+        //     name: "Fortbyte",
+        //     icon: L.icon({
+        //         iconUrl: '../images/icons/fortbyte.png',
+        //         iconSize: [32, 32],
+        //         iconAnchor: [16, 12],
+        //         popupAnchor: [0, -16]
+        //     })
+        // }
         fortbyte: {
             url: "fortbytes",
             name: "Fortbyte",
-            icon: L.icon({
+            icon: L.divIcon({
                 iconUrl: '../images/icons/fortbyte.png',
                 iconSize: [32, 32],
                 iconAnchor: [16, 12],
-                popupAnchor: [0, -16]
+                popupAnchor: [0, -16],
+                className: 'number-div-icon',
             })
         }
     };
@@ -355,23 +367,6 @@ function initMap(elementId)
         }
     });
 
-    // let battleRoyaleMap = L.map(elementId, {
-    //     crs: L.CRS.Simple,
-    //     minZoom: Math.log2(MAP_HEIGHT / divHeight) * (-1),
-    //     maxZoom: Math.log2(MAP_HEIGHT / divHeight) * (-1) + 4,
-    //     center: [0, 0],
-    //     zoom: Math.log2(MAP_HEIGHT / divHeight) * (-1),
-    //     maxBounds: MAP_BOUNDS,
-    //     zoomDelta: 0.25,
-    //     zoomSnap: 0,
-    //     wheelPxPerZoomLevel: 50,
-    //     wheelDebounceTime: 20,
-    //     attributionControl: false,
-    //     zoomControl: false,
-    //     // dragging: !L.Browser.mobile, // disable 1 finger map moving
-    //     zoomTouch: true
-    // });
-
     var battleRoyaleMap = L.map(elementId, {
         crs: FortniteMapCRS,
         maxBounds: MAP_BOUNDS,
@@ -402,21 +397,6 @@ function initMap(elementId)
         keepBuffer: 32, // # of saved tiles (until zoom)
         updateInterval: 50, // 50 ms, default 200 ms
     }).addTo(battleRoyaleMap);
-
-    /*coords test*/
-    // var popup = L.popup();
-    //
-    // function onMapClick(e)
-    // {
-    //     popup
-    //         .setLatLng(e.latlng)
-    //         .setContent("You clicked the map at " + e.latlng.toString())
-    //         .openOn(battleRoyaleMap);
-    // }
-    //
-    // battleRoyaleMap.on('click', onMapClick);
-
-    /**/
 
     return battleRoyaleMap;
 }
@@ -505,21 +485,42 @@ function addJsonToOverlays(map)
                 L.geoJSON(geoJson, {
                     pointToLayer: (feature, latlng) =>
                     {
-                        let newMarker = L.marker(latlng, {
-                            icon: ITEMS[item]["icon"],
-                            id: feature.properties["id"],
-                            riseOnHover: true
-                        });
-
                         // load opacities from cookie
                         let completedCookie = getCookie("completed");
 
                         let completedArray = [];
                         if (completedCookie !== "") completedArray = JSON.parse(completedCookie);
 
+                        // create new icon
+                        let icon = L.divIcon({
+                            iconUrl: ITEMS[item]["icon"]["options"]["iconUrl"],
+                            iconSize: ITEMS[item]["icon"]["options"]["iconSize"],
+                            iconAnchor: ITEMS[item]["icon"]["options"]["iconAnchor"],
+                            popupAnchor: ITEMS[item]["icon"]["options"]["popupAnchor"],
+                            html: `<img src="${ITEMS[item]["icon"]["options"]["iconUrl"]}">` + `<span>${feature.properties["number"]}</span>`, //fixme if check if number exist and html only for fortbyte
+                            className: ITEMS[item]["icon"]["options"]["className"]
+                        });
+
+                        let newMarker = L.marker(latlng, {
+                            icon: completedArray.indexOf(feature.properties["id"]) > -1 ? icon : icon,
+                            id: feature.properties["id"],
+                            type: item,
+                            riseOnHover: true
+                        });
+                        if (feature.properties["number"] !== undefined) newMarker["options"]["number"] = feature.properties["number"];
+
+                        // change class for completed markers
                         if ((completedArray.indexOf(newMarker["options"]["id"])) > -1)
                         {
-                            newMarker.setOpacity(0.6);
+                            let icon = L.divIcon({
+                                iconUrl: ITEMS[item]["icon"]["options"]["iconUrl"],
+                                iconSize: ITEMS[item]["icon"]["options"]["iconSize"],
+                                iconAnchor: ITEMS[item]["icon"]["options"]["iconAnchor"],
+                                popupAnchor: ITEMS[item]["icon"]["options"]["popupAnchor"],
+                                html: `<img src="${ITEMS[item]["icon"]["options"]["iconUrl"]}">` + `<span>${feature.properties["number"]}</span>`,
+                                className: ITEMS[item]["icon"]["options"]["className"] + " " + (hideCompleted ? "completed-hide" : "completed")
+                            });
+                            newMarker.setIcon(icon);
                         }
 
                         newMarker.on("click", () =>
@@ -546,11 +547,11 @@ function addJsonToOverlays(map)
                             let title;
                             if (feature.properties["number"] !== undefined)  // define title
                             {
-                                title = `#${feature.properties["number"]} ${ITEMS[item]["name"]}`;
+                                title = `#${feature.properties["number"]} ${DICTIONARY[item][locale]["sing"]}`;
                             }
                             else
                             {
-                                title = `${ITEMS[item]["name"]}`;
+                                title = `${DICTIONARY[item][locale]["sing"]}`;
                             }
                             popup.find("div:first-child span").text(title); // set title
 
@@ -576,43 +577,11 @@ function addJsonToOverlays(map)
                             }
 
                             lastClickedMarker = newMarker;
-                            if (feature.properties["number"] !== undefined)
-                            {
-                                lastNumber = feature.properties["number"];
-                            }
                         });
 
                         return newMarker;
                     },
                     style: () => ITEMS[item]["options"],
-                    onEachFeature: (feature, layer) =>
-                    {
-                        if (feature.properties["number"] !== undefined)
-                        {
-                            let divIconNumber = L.divIcon({
-                                className: 'number-div-icon',
-                                html: feature.properties["number"],
-                                iconSize: [32, 32],
-                                iconAnchor: [20, 7]
-                            });
-
-                            L.marker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-                                icon: divIconNumber,
-                                interactive: false
-                            }).addTo(newItemOverlay);
-
-                            // load opacities from cookie
-                            let completedCookie = getCookie("completed");
-
-                            let completedArray = [];
-                            if (completedCookie !== "") completedArray = JSON.parse(completedCookie);
-
-                            if ((completedArray.indexOf(feature.properties["id"])) > -1)
-                            {
-                                $(`div .number-div-icon:contains(${feature.properties["number"]})`).addClass("completed");
-                            }
-                        }
-                    }
                 }).addTo(newItemOverlay);
             });
 
@@ -622,7 +591,7 @@ function addJsonToOverlays(map)
             first = false;
         }
 
-        overlays[ITEMS[item]['name']] = newItemOverlay;
+        overlays[DICTIONARY[item][locale]["plur"]] = newItemOverlay;
     }
 
     return overlays;
@@ -652,7 +621,6 @@ function addContextMenu(elementId, leafletMap)
     let crosshair = $("#crosshair");
     let cancelBtn = newPointDiv.find(".close-btn");
     let form = newPointDiv.find("form");
-    // let errorBox = $("#error-box");
 
     /* INIT */
     let menu = $("#map-menu");
@@ -666,7 +634,7 @@ function addContextMenu(elementId, leafletMap)
     {
         form.find("select")
             .append(
-                $(`<option value="${ITEMS[item]["url"]}">`).attr("data-item-type", item).text(ITEMS[item]["name"])
+                $(`<option value="${ITEMS[item]["url"]}">`).attr("data-item-type", item).text(DICTIONARY[item][locale]["sing"])
             );
     }
 
@@ -703,7 +671,6 @@ function addContextMenu(elementId, leafletMap)
     addAnchor.on("click", () =>
     {
         menu.css("display", "none"); // after click, hide menu, and proceed with points...
-        console.log("POST send with points: " + newPoint[0] + " and " + newPoint[1]);
 
         let f = form.find("input:first-child");
         $(f.get(0)).val(newPoint[0]);
@@ -739,7 +706,7 @@ function addContextMenu(elementId, leafletMap)
         let itemURL = form.find("select option:selected").attr("value");
         if (itemURL === undefined || itemURL === "")
         {
-            showInfo(errorBox, "Error: Please select item type");
+            showInfo(errorBox, DICTIONARY["err-item-type"][locale]);
             return;
         }
 
@@ -777,7 +744,7 @@ function addContextMenu(elementId, leafletMap)
                 }
                 else
                 {
-                    errorMsg = `Error occurred: ${errorJSON["status"]} ${errorJSON["error"]}<br>${errorThrown}`;
+                    errorMsg = `${DICTIONARY["err-occured"][locale]}: ${errorJSON["status"]} ${errorJSON["error"]}<br>${errorThrown}`;
                 }
 
                 showInfo(errorBox, errorMsg);
@@ -788,58 +755,22 @@ function addContextMenu(elementId, leafletMap)
                 newPointDiv.css("right", "-285px"); // hide form div
             });
     });
-
-    /* FUNCTIONS */
-    // function showInfo(element, msg)
-    // {
-    //     if (element.css("display") === "none")
-    //     {
-    //         element.html(msg).fadeIn(1000);
-    //         setTimeout(() =>
-    //         {
-    //             element.fadeOut(4000);
-    //         }, 6000); // show opacity 1.0 for 5s (+1s from fadeIn)
-    //     }
-    // }
 }
 
 function translate(locale)
 {
-    const dictionary = {
-        "task-done": {
-            "en": "Done",
-            "pl": "Gotowe"
-        },
-        "bg-common": {
-            "en": "Common",
-            "pl": "Pospolite"
-        },
-        "bg-uncommon": {
-            "en": "Uncommon",
-            "pl": "Niepospolite"
-        },
-        "feedback": {
-            "en": "Feedback",
-            "pl": "Opinia"
-        },
-        "opt-email": {
-            "en": "Email (optional)",
-            "pl": "Email (niewymagany)"
-        },
-    }; // todo extend dictionary
-
     let elementsToTranslete = $("[data-translate]");
     for (let el of elementsToTranslete)
     {
         let tName = $(el).attr("data-translate");
-        if ($(el).text() !== "") $(el).text(dictionary[tName][locale]); // translate
+        if ($(el).text() !== "") $(el).text(DICTIONARY[tName][locale]); // translate
 
         for (let dataAttr in ($(el).data())) // find all data-translate-*
         {
             let attr = dataAttr.replace("translate", "").toLowerCase();
             if (attr !== "")
             {
-                if ($(el).attr(attr) !== "") $(el).attr(attr, dictionary[tName][locale]);
+                if ($(el).attr(attr) !== "") $(el).attr(attr, DICTIONARY[tName][locale]);
             }
         }
     }
@@ -849,6 +780,17 @@ document.addEventListener("DOMContentLoaded", () =>
 {
     errorBox = $("#error-box"); // init error box
     locale = getCookie("locale") || navigator.language || "en";
+    if (languages.indexOf(locale) === -1) locale = "en"; // check if we support the language
+
+    // check hiding markers setting
+    let hideComplCookie = getCookie("hide_completed");
+    hideCompleted = hideComplCookie !== "" && hideComplCookie === "true";
+
+    // init hide completed checkbox
+    if (hideComplCookie !== "")
+    {
+        $("#hide-completed-checkbox")[0].checked = hideCompleted;
+    }
 
     /* init map */
     let battleRoyaleMap = initMap(ELEMENT_ID);
@@ -858,7 +800,8 @@ document.addEventListener("DOMContentLoaded", () =>
 
     /* load JSONs*/
     let overlays = addJsonToOverlays(battleRoyaleMap);
-    overlays['Map grid'] = gridOverlay; // add grid to overlays (as last entry)
+    // overlays['Map grid'] = gridOverlay; // add grid to overlays (as last entry)
+    overlays[DICTIONARY["map-grid"][locale]] = gridOverlay; // add grid to overlays (as last entry)
 
     /* customize layers box */
     customizeLayersBox(battleRoyaleMap, overlays);
@@ -878,14 +821,20 @@ document.addEventListener("DOMContentLoaded", () =>
         $(e.target).parent().parent().css("display", "none"); // hide div on close button click / $(this) doesn't work
         $(lastClickedMarker.getElement()).removeClass("active"); // remove active class from last clicked marker
     });
-    let completionCheckbox = infoBox.find("form input[type=checkbox]");
+    let completionCheckbox = infoBox.find("#completed-checkbox");
     completionCheckbox.on("change", function ()
     {
         if (this.checked)
         {
-            // lower marker opacity
-            $(`div .number-div-icon:contains(${lastNumber})`).addClass("completed");
-            lastClickedMarker.setOpacity(0.6);
+            let icon = L.divIcon({
+                iconUrl: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconUrl"],
+                iconSize: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconSize"],
+                iconAnchor: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconAnchor"],
+                popupAnchor: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["popupAnchor"],
+                html: `<img src="${ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconUrl"]}">` + `<span>${lastClickedMarker.options.number}</span>`,
+                className: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["className"] + " " + (hideCompleted ? "completed-hide" : "completed")
+            });
+            lastClickedMarker.setIcon(icon);
 
             // add/update cookie
             let completedCookie = getCookie("completed");
@@ -905,9 +854,15 @@ document.addEventListener("DOMContentLoaded", () =>
         }
         else
         {
-            // set normal marker opacity
-            $(`div .number-div-icon:contains(${lastNumber})`).removeClass("completed");
-            lastClickedMarker.setOpacity(1.0);
+            let icon = L.divIcon({
+                iconUrl: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconUrl"],
+                iconSize: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconSize"],
+                iconAnchor: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconAnchor"],
+                popupAnchor: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["popupAnchor"],
+                html: `<img src="${ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconUrl"]}">` + `<span>${lastClickedMarker.options.number}</span>`,
+                className: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["className"]
+            });
+            lastClickedMarker.setIcon(icon);
 
             // remove id from cookie
             let completedCookie = getCookie("completed");
@@ -923,6 +878,7 @@ document.addEventListener("DOMContentLoaded", () =>
             }
             setCookie("completed", JSON.stringify(completedArray), 180)
         }
+        $(lastClickedMarker.getElement()).addClass("active"); // still active on checkbox change
         recalculateProgress();
     });
 
@@ -948,7 +904,7 @@ document.addEventListener("DOMContentLoaded", () =>
             .done(function (geoJson)
             { // success
                 $(e.target)[0].reset(); // reset form
-                showInfo(errorBox, "Thank you for your feedback!")
+                showInfo(errorBox, DICTIONARY["feedback-ok"][locale])
             })
             .fail(function (xhr, textStatus, errorThrown)
             { // fail
@@ -956,11 +912,11 @@ document.addEventListener("DOMContentLoaded", () =>
                 let errorMsg;
                 if (errorJSON["status"] === undefined)
                 {
-                    errorMsg = `${errorThrown}`;
+                    errorMsg = `${DICTIONARY["feedback-not-sent"][locale]}<br>${errorThrown}`;
                 }
                 else
                 {
-                    errorMsg = `Feedback was not sent!<br>Error occurred: ${errorJSON["status"]} ${errorJSON["error"]}<br>${errorThrown}`;
+                    errorMsg = `${DICTIONARY["feedback-not-sent"][locale]}<br>${DICTIONARY["err-occured"][locale]}: ${errorJSON["status"]} ${errorJSON["error"]}<br>${errorThrown}`;
                 }
 
                 showInfo(errorBox, errorMsg);
@@ -1017,4 +973,36 @@ document.addEventListener("DOMContentLoaded", () =>
     });
 
     translate(locale); // show page in selected language
+
+    for (let overlay in overlays)
+    {
+        if (!overlays.hasOwnProperty(overlay)) continue;
+
+        // hide popup on layer change
+        overlays[overlay].on("add", () =>
+        {
+            $("#popup").css("display", "none");
+            if (lastClickedMarker !== undefined)
+            {
+                $(lastClickedMarker.getElement()).removeClass("active"); // remove active class from last clicked marker
+            }
+        });
+
+        // hide popup on layer change
+        overlays[overlay].on("remove", () =>
+        {
+            $("#popup").css("display", "none");
+            if (lastClickedMarker !== undefined)
+            {
+                $(lastClickedMarker.getElement()).removeClass("active"); // remove active class from last clicked marker
+            }
+        });
+    }
+
+    // hide completed on checkbox change
+    $("#hide-completed-checkbox").on("change", (e) =>
+    {
+        setCookie("hide_completed", e.target.checked, 180);
+        location.reload();
+    })
 });
