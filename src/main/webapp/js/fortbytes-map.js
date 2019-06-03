@@ -1,3 +1,6 @@
+// user console hello + embed code
+console.log(`%cHello Developer!\nUse the code below to embed this map on your site:\n` + `%c<iframe id="fortbytes-map" title="Fortbytes Map" width="100%" height="1024px"\r\n\tscrolling="no" frameborder="0" border="0" cellspacing="0"\r\n\tstyle="overflow: hidden; margin:0 auto; display: block;"\r\n\tsrc="http://212.47.237.134:8080/fortnite-map/fortbytes/">\r\n</iframe>` + `%c\n\nAPI documentation will be available soon.`, "color: rgb(58, 131, 105); font-family: 'Arial', serif; font-size: 18px;", "color: gray; font-family: monospace; font-size: 14px;", "color: rgb(58, 131, 105); font-family: 'Arial', serif; font-size: 18px;");
+
 const ELEMENT_ID = "fnbr_map";
 const MAP_VERSION = "9.00";
 const TILE_MAP_URL_TEMPLATE = "{z}/{x}/{y}.jpg";
@@ -332,7 +335,7 @@ function recalculateProgress()
 
     let progress = ((completedArray.length + remainingArray.length) * 100 / 100) + "%";
 
-    $(".progress-bar div:nth-child(1) > span").text(progress);
+    $(".progress-bar div:nth-child(1) > span.perc").text(progress);
     $(".progress-bar div:nth-child(2) > div").css("width", progress);
 }
 
@@ -379,7 +382,7 @@ function initMap(elementId)
 
 
     L.control.attribution({
-        prefix: "&copy; <a style='cursor: default;'>Hory314</a>",
+        prefix: "&copy; <a style='cursor: default;'>Hory314</a> | <a data-translate='full-map' href='http://212.47.237.134:8080/fortnite-map/fortbytes'>Full map version</a>",
         position: "bottomright"
     }).addTo(battleRoyaleMap);
     L.control.attribution({
@@ -497,7 +500,7 @@ function addJsonToOverlays(map)
                             iconSize: ITEMS[item]["icon"]["options"]["iconSize"],
                             iconAnchor: ITEMS[item]["icon"]["options"]["iconAnchor"],
                             popupAnchor: ITEMS[item]["icon"]["options"]["popupAnchor"],
-                            html: `<img src="${ITEMS[item]["icon"]["options"]["iconUrl"]}">` + `<span>${feature.properties["number"]}</span>`, //fixme if check if number exist and html only for fortbyte
+                            html: `<img src="${ITEMS[item]["icon"]["options"]["iconUrl"]}">` + `<span>${feature.properties["number"] !== undefined ? feature.properties["number"] : ""}</span>`, //fixme if check if number exist and html only for fortbyte
                             className: ITEMS[item]["icon"]["options"]["className"]
                         });
 
@@ -517,7 +520,7 @@ function addJsonToOverlays(map)
                                 iconSize: ITEMS[item]["icon"]["options"]["iconSize"],
                                 iconAnchor: ITEMS[item]["icon"]["options"]["iconAnchor"],
                                 popupAnchor: ITEMS[item]["icon"]["options"]["popupAnchor"],
-                                html: `<img src="${ITEMS[item]["icon"]["options"]["iconUrl"]}">` + `<span>${feature.properties["number"]}</span>`,
+                                html: `<img src="${ITEMS[item]["icon"]["options"]["iconUrl"]}">` + `<span>${feature.properties["number"] !== undefined ? feature.properties["number"] : ""}</span>`,
                                 className: ITEMS[item]["icon"]["options"]["className"] + " " + (hideCompleted ? "completed-hide" : "completed")
                             });
                             newMarker.setIcon(icon);
@@ -528,7 +531,7 @@ function addJsonToOverlays(map)
                             let popup = $("#popup");
                             let completionCheckbox = popup.find("form input[type=checkbox]"); // checkbox el
                             popup.css("display", "block"); // display popup on click
-                            popup.find("div:nth-child(2) span").text(""); // reset desc
+                            popup.find("div:nth-child(2) span.desc").text(""); // reset desc
                             popup.find("div:nth-child(2) img").attr("src", ""); // reset image
 
                             popup.find("div:first-child img").attr("src", ITEMS[item]["icon"]["options"]["iconUrl"]); // set icon
@@ -557,12 +560,12 @@ function addJsonToOverlays(map)
 
                             if (feature.properties["descriptions"] !== undefined) // set description
                             {
-                                popup.find("div:nth-child(2) span").text(`${feature.properties["descriptions"][locale]}`);
-                                popup.find("div:nth-child(2) span").css("display", "inline-block");
+                                popup.find("div:nth-child(2) span.desc").text(`${feature.properties["descriptions"][locale]}`);
+                                popup.find("div:nth-child(2) span.desc").css("display", "inline-block");
                             }
                             else
                             {
-                                popup.find("div:nth-child(2) span").css("display", "none");
+                                popup.find("div:nth-child(2) span.desc").css("display", "none");
                             }
 
                             // set image
@@ -763,14 +766,22 @@ function translate(locale)
     for (let el of elementsToTranslete)
     {
         let tName = $(el).attr("data-translate");
-        if ($(el).text() !== "") $(el).text(DICTIONARY[tName][locale]); // translate
 
         for (let dataAttr in ($(el).data())) // find all data-translate-*
         {
+            if (dataAttr === "translateNoInnerhtml") continue;
             let attr = dataAttr.replace("translate", "").toLowerCase();
             if (attr !== "")
             {
                 if ($(el).attr(attr) !== "") $(el).attr(attr, DICTIONARY[tName][locale]);
+            }
+        }
+
+        if (!$(el).get(0).hasAttribute("data-translate-no-innerhtml"))
+        {
+            if ($(el).text() !== "") // translate
+            {
+                $(el).text(DICTIONARY[tName][locale]);
             }
         }
     }
@@ -831,7 +842,7 @@ document.addEventListener("DOMContentLoaded", () =>
                 iconSize: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconSize"],
                 iconAnchor: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconAnchor"],
                 popupAnchor: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["popupAnchor"],
-                html: `<img src="${ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconUrl"]}">` + `<span>${lastClickedMarker.options.number}</span>`,
+                html: `<img src="${ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconUrl"]}">` + `<span>${lastClickedMarker.options.number !== undefined ? lastClickedMarker.options.number : ""}</span>`,
                 className: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["className"] + " " + (hideCompleted ? "completed-hide" : "completed")
             });
             lastClickedMarker.setIcon(icon);
@@ -859,7 +870,7 @@ document.addEventListener("DOMContentLoaded", () =>
                 iconSize: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconSize"],
                 iconAnchor: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconAnchor"],
                 popupAnchor: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["popupAnchor"],
-                html: `<img src="${ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconUrl"]}">` + `<span>${lastClickedMarker.options.number}</span>`,
+                html: `<img src="${ITEMS[lastClickedMarker.options.type]["icon"]["options"]["iconUrl"]}">` + `<span>${lastClickedMarker.options.number !== undefined ? lastClickedMarker.options.number : ""}</span>`,
                 className: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["className"]
             });
             lastClickedMarker.setIcon(icon);

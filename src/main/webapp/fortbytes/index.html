@@ -17,253 +17,284 @@
 </head>
 <body>
 <div id="settings" class="lity-hide">
-    <!--<div id="settings">-->
-    <div>Background color:</div>
+    <div data-translate="bg-color">Background color:</div>
     <div class="bg-common"><span data-translate="bg-common">Common</span></div>
     <div class="bg-uncommon"><span data-translate="bg-uncommon">Uncommon</span></div>
-    <div class="bg-rare"><span>Rare</span></div>
-    <div class="bg-epic"><span>Epic</span></div>
-    <div class="bg-legendary"><span>Legendary</span></div>
-    <div class="bg-mythic"><span>Mythic</span></div>
-    <div class="bg-white"><span>White</span></div>
-    <div class="bg-black"><span>Black</span></div>
-    <div class="bg-gray"><span>Gray</span></div>
-    <div class="bg-light-gray"><span>Light&nbsp;Gray</span></div>
+    <div class="bg-rare"><span data-translate="bg-rare">Rare</span></div>
+    <div class="bg-epic"><span data-translate="bg-epic">Epic</span></div>
+    <div class="bg-legendary"><span data-translate="bg-legendary">Legendary</span></div>
+    <div class="bg-mythic"><span data-translate="bg-mythic">Mythic</span></div>
+    <div class="bg-white"><span data-translate="bg-white">White</span></div>
+    <div class="bg-black"><span data-translate="bg-black">Black</span></div>
+    <div class="bg-gray"><span data-translate="bg-gray">Gray</span></div>
+    <div class="bg-light-gray"><span data-translate="bg-light-gray">Light Gray</span></div>
     <hr>
     <form>
         <input id="hide-completed-checkbox" class="css-checkbox" type="checkbox">
-        <label class="css-label" for="hide-completed-checkbox">Completely hide completed tasks</label>
+        <label class="css-label" for="hide-completed-checkbox" data-translate="compl-hide-tasks">Completely hide
+            completed tasks</label>
     </form>
+    <hr>
+    <span data-translate="embed-info">Use code below to embed map on your site:</span>
+    <form class="code">
+        <textarea readonly disabled><iframe id="fortbytes-map" title="Fortbytes Map" width="100%" height="1024px"
+    scrolling="no" frameborder="0" border="0" cellspacing="0"
+    style="overflow: hidden; margin:0 auto; display: block;"
+    src="http://212.47.237.134:8080/fortnite-map/fortbytes/">
+</iframe></textarea>
+    </form>
+    <span class="embad-warn" data-translate="embed-warn">Warning: This site uses only http:// protocol</span>
+    <hr>
+    <a href="#" data-translate="api-doc">API Documentation</a> (<span data-translate="ava-soon">available soon</span>)
 </div>
 <div id="feedback" class="lity-hide">
     <form>
         <label>
-            <textarea data-translate="feedback" data-translate-placeholder name="feedback" placeholder="Feedback" required></textarea>
+            <textarea data-translate="feedback" data-translate-placeholder name="feedback" placeholder="Feedback"
+                      required></textarea>
         </label><br>
         <label>
-            <input data-translate="opt-email" data-translate-placeholder name="email" placeholder="Email (optional)" type="email">
+            <input data-translate="opt-email" data-translate-placeholder name="email" placeholder="Email (optional)"
+                   type="email">
         </label><br>
-        <input type="submit">
+        <input type="submit" data-translate="submit" data-translate-value value="Submit">
     </form>
 </div>
 <div id="error-box"></div>
 <div class="leaflet-touch leaflet-control-layers leaflet-touch leaflet-bar cog">
     <a href="#settings" data-lity>
-        <img alt="" title="Settings" src="../images/common/cogwheel-icon.png">
+        <img alt="" data-translate="settings" data-translate-title title="Settings"
+             src="../images/common/cogwheel-icon.png">
     </a>
 </div>
 <div id="popup">
     <div>
         <img src="" alt=""><span></span>
-        <div class="close-btn" title="Close">+</div>
+        <div class="close-btn" data-translate="close" data-translate-title data-translate-no-innerhtml title="Close">+
+        </div>
     </div>
     <div>
-        <span></span>
+        <span class="desc"></span>
         <img src="" alt="" data-lity>
-        <form>Check if you have completed this task:
+        <form><span data-translate="check-if-completed">Check if you have completed this task:</span>
             <input id="completed-checkbox" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="completed-checkbox">Done</label>
         </form>
     </div>
 </div>
 <div class="open-button">
-    <div class="arrow">►</div>
+    <div class="arrow">&#9658;</div>
 </div>
 <div id="left-menu">
     <div class="progress-bar">
-        <div>Your Fortbytes progress: <span>0%</span></div>
+        <div><span data-translate="fortbytes-progress">Your Fortbytes progress</span>: <span class="perc">0%</span>
+        </div>
         <div>
             <div></div>
         </div>
     </div>
-    <span>Fortbytes not available on the map:</span>
+    <span data-translate="fortbytes-not-on-map">Fortbytes not available on the map:</span>
+    <!-- -->
     <div class="fortbyte-no">
-        <span>#1</span>
-        <span>
+        <span class="num">#1</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-1" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-1">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za zdobycie 175 000 PD
+        <span data-translate="fortbyte-1-desc">Awarded for gaining 175,000 XP</span>
     </div>
     <div class="fortbyte-no">
-        <span>#10</span>
-        <span>
+        <span class="num">#10</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-10" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-10">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za zdobycie 60 000 PD
+        <span data-translate="fortbyte-10-desc">Awarded for gaining 60,000 XP</span>
     </div>
     <div class="fortbyte-no">
-        <span>#25</span>
-        <span>
+        <span class="num">#25</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-25" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-25">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za osiągnięcie 40 stopnia karnetu bojowego
+        <span data-translate="fortbyte-25-desc">Awarded at Battle Pass Tier 40</span>
     </div>
     <div class="fortbyte-no">
-        <span>#35</span>
-        <span>
+        <span class="num">#35</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-35" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-35">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za zdobycie 225 000 PD
+        <span data-translate="fortbyte-35-desc">Awarded for gaining 225,000 XP</span>
     </div>
     <div class="fortbyte-no">
-        <span>#39</span>
-        <span>
+        <span class="num">#39</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-39" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-39">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za ukończenie 6 wyzwań drugiego tygodnia
+        <span data-translate="fortbyte-39-desc">Awarded for completing 6 challenges from Week 2</span>
     </div>
     <div class="fortbyte-no">
-        <span>#42</span>
-        <span>
+        <span class="num">#42</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-42" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-42">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za ukończenie 6 wyzwań trzeciego tygodnia
+        <span data-translate="fortbyte-42-desc">Awarded for completing 6 challenges from Week 3</span>
     </div>
     <div class="fortbyte-no">
-        <span>#44</span>
-        <span>
+        <span class="num">#44</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-44" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-44">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za osiągnięcie 20 stopnia karnetu bojowego
+        <span data-translate="fortbyte-44-desc">Awarded at Battle Pass Tier 20</span>
     </div>
     <div class="fortbyte-no">
-        <span>#46</span>
-        <span>
+        <span class="num">#46</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-46" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-46">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za osiągnięcie 100 stopnia karnetu bojowego
+        <span data-translate="fortbyte-46-desc">Awarded at Battle Pass Tier 100</span>
     </div>
     <div class="fortbyte-no">
-        <span>#57</span>
-        <span>
+        <span class="num">#54</span>
+        <span class="cmpl">
+        <form>
+            <input id="fortbyte-54" class="css-checkbox" type="checkbox">
+            <label class="css-label" data-translate="task-done" for="fortbyte-54">Done</label>
+        </form>
+        </span>
+        <div class="clear-fix"></div>
+        <span data-translate="fortbyte-54-desc">Awarded for completing 6 challenges from Week 4</span>
+    </div>
+    <div class="fortbyte-no">
+        <span class="num">#57</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-57" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-57">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 25 razy
+        <span data-translate="fortbyte-57-desc">Awarded by finishing top 10 in squads, duos, or solo 25 times</span>
     </div>
     <div class="fortbyte-no">
-        <span>#66</span>
-        <span>
+        <span class="num">#66</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-66" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-66">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 75 razy
+        <span data-translate="fortbyte-66-desc">Awarded by finishing top 10 in squads, duos, or solo 75 times</span>
     </div>
     <div class="fortbyte-no">
-        <span>#71</span>
-        <span>
+        <span class="num">#71</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-71" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-71">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za ukończenie 6 wyzwań pierwszego tygodnia
+        <span data-translate="fortbyte-71-desc">Awarded for completing 6 challenges from Week 1</span>
     </div>
     <div class="fortbyte-no">
-        <span>#84</span>
-        <span>
+        <span class="num">#84</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-84" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-84">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za osiągnięcie 60 stopnia karnetu bojowego
+        <span data-translate="fortbyte-84-desc">Awarded at Battle Pass Tier 60</span>
     </div>
     <div class="fortbyte-no">
-        <span>#85</span>
-        <span>
+        <span class="num">#85</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-85" class="css-checkbox" type="checkbox">
-            <label class="css-label" data-translate="task-done" data-translate="task-done" for="fortbyte-85">Done</label>
+            <label class="css-label" data-translate="task-done" for="fortbyte-85">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za zdobycie 30 000 PD
+        <span data-translate="fortbyte-85-desc">Awarded for gaining 30,000 XP</span>
     </div>
     <div class="fortbyte-no">
-        <span>#87</span>
-        <span>
+        <span class="num">#87</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-87" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-87">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 50 razy
+        <span data-translate="fortbyte-87-desc">Awarded by finishing top 10 in squads, duos, or solo 50 times</span>
     </div>
     <div class="fortbyte-no">
-        <span>#90</span>
-        <span>
+        <span class="num">#90</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-90" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-90">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 100 razy
+        <span data-translate="fortbyte-90-desc">Awarded by finishing top 10 in squads, duos, or solo 100 times</span>
     </div>
     <div class="fortbyte-no">
-        <span>#96</span>
-        <span>
+        <span class="num">#96</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-96" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-96">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za osiągnięcie 80 stopnia karnetu bojowego
+        <span data-translate="fortbyte-96-desc">Awarded at Battle Pass Tier 80</span>
     </div>
     <div class="fortbyte-no">
-        <span>#99</span>
-        <span>
+        <span class="num">#99</span>
+        <span class="cmpl">
         <form>
             <input id="fortbyte-99" class="css-checkbox" type="checkbox">
             <label class="css-label" data-translate="task-done" for="fortbyte-99">Done</label>
         </form>
         </span>
         <div class="clear-fix"></div>
-        Nagroda za zdobycie 125 000 PD
+        <span data-translate="fortbyte-99-desc">Awarded for gaining 125,000 XP</span>
     </div>
+
+    <!-- -->
 </div>
 <div id="fnbr_map" class="bg-rare">
     <div class="bg-spikes">
@@ -276,8 +307,8 @@
     </div>
 </div>
 <div id="cookies">
-    <span>
-        This site uses cookies to personalise content and adverts, and to analyse traffic. <button>OK</button>
+    <span class="cookie-warn">
+        <span data-translate="cookie-warn">This site uses cookies to personalise content and adverts, and to analyse traffic.</span> <button>OK</button>
     </span>
 </div>
 <div id="locale">
