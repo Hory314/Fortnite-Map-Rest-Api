@@ -1,8 +1,8 @@
 const ELEMENT_ID = "fnbr_map";
 const MAP_VERSION = "9.00";
 const TILE_MAP_URL_TEMPLATE = "{z}/{x}/{y}.jpg";
-const API_URL = "http://localhost:8080/api/";
-// const API_URL = "api/";
+// const API_URL = "http://localhost:8080/api/";
+const API_URL = "api/";
 const MAP_WIDTH = 2500;
 const MAP_HEIGHT = 2500;
 const MAP_SCALE_FIX = 120;
@@ -580,11 +580,14 @@ function addContextMenu(elementId, leafletMap)
     {
         e.preventDefault();
 
+
+
         let itemData = {
             lat: newPoint[0],
             lng: newPoint[1],
             location: null,
-            link: null
+            link: null,
+            number: form.find("input[name=number]").val()
         };
 
         let itemURL = form.find("select option:selected").attr("value");

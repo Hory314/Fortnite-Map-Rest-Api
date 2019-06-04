@@ -181,6 +181,8 @@ public class ItemService
         // newItem.setLink(itemRepository.getOne(999999L));
         newItem.setLink(null); // id of existing Item or null
 
+        newItem.setNumber(newItemDTO.getNumber());
+
         Item createdItem = itemRepository.save(newItem);
         return getGeoJSON(createdItem);
     }

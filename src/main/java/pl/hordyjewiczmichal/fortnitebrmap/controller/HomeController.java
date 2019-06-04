@@ -13,7 +13,7 @@ public class HomeController
 //        return "home";
 //    }
 
-        @RequestMapping("/szymon")
+    @RequestMapping("/szymon")
     public String home()
     {
         return "home";
