@@ -31,3 +31,4 @@ HELP.md
 .iml
 /idea
 .mvn
+/src/main/resources/application.properties

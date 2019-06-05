@@ -1,11 +1,13 @@
+const embedCode = `<iframe id="fortbytes-map" title="Fortbytes Map"\r\n\tscrolling="no" frameborder="0" border="0" cellspacing="0"\r\n\tstyle="height: 100vh; width: 100vw; overflow: hidden; margin: 0 auto; display: block;"\r\n\tsrc="${window.location.href}">\r\n</iframe>`;
+
 // user console hello + embed code
-console.log(`%cHello Developer!\nUse the code below to embed this map on your site:\n` + `%c<iframe id="fortbytes-map" title="Fortbytes Map" width="100%" height="1024px"\r\n\tscrolling="no" frameborder="0" border="0" cellspacing="0"\r\n\tstyle="overflow: hidden; margin:0 auto; display: block;"\r\n\tsrc="http://51.15.234.40/fortbytes/">\r\n</iframe>` + `%c\n\nAPI documentation will be available soon.`, "color: rgb(58, 131, 105); font-family: 'Arial', serif; font-size: 18px;", "color: gray; font-family: monospace; font-size: 14px;", "color: rgb(58, 131, 105); font-family: 'Arial', serif; font-size: 18px;");
+console.log(`%cHello Developer!\nUse the code below to embed this map on your site:\n` + `%c${embedCode}` + `%c\n\nAPI documentation will be available soon.`, "color: rgb(58, 131, 105); font-family: 'Arial', serif; font-size: 18px;", "color: gray; font-family: monospace; font-size: 14px;", "color: rgb(58, 131, 105); font-family: 'Arial', serif; font-size: 18px;");
 
 const ELEMENT_ID = "fnbr_map";
 const MAP_VERSION = "9.00";
 const TILE_MAP_URL_TEMPLATE = "{z}/{x}/{y}.jpg";
 // const API_URL = "http://localhost:8080/api/";
-const API_URL = "api/";
+const API_URL = "/api/";
 const MAP_WIDTH = 2500;
 const MAP_HEIGHT = 2500;
 const MAP_SCALE_FIX = 120;
@@ -382,7 +384,7 @@ function initMap(elementId)
 
 
     L.control.attribution({
-        prefix: "&copy; <a style='cursor: default;'>Hory314</a> | <a data-translate='full-map' href='http://51.15.234.40/fortbytes'>Full map version</a>",
+        prefix: `&copy; <a style='cursor: default;'>Hory314</a> | <a data-translate='full-map' href='${window.location.href}'>Full map version</a>`,
         position: "bottomright"
     }).addTo(battleRoyaleMap);
     L.control.attribution({
@@ -790,7 +792,7 @@ function translate(locale)
 document.addEventListener("DOMContentLoaded", () =>
 {
     errorBox = $("#error-box"); // init error box
-    locale = getCookie("locale") || navigator.language || "en";
+    locale = getCookie("locale") || (navigator.language).substring(0, 2) || "en";
     if (languages.indexOf(locale) === -1) locale = "en"; // check if we support the language
 
     // check hiding markers setting
@@ -1015,5 +1017,8 @@ document.addEventListener("DOMContentLoaded", () =>
     {
         setCookie("hide_completed", e.target.checked, 180);
         location.reload();
-    })
+    });
+
+    // populate embed code
+    $("form.code textarea").text(embedCode);
 });
