@@ -46,6 +46,7 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
     @Order(1)
     public static class StaticWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter
     {
+        @Override
         protected void configure(HttpSecurity http) throws Exception
         {
             // X-Frame-Options config for static/specified sites
@@ -63,6 +64,7 @@ public class MultiHttpSecurityConfig extends WebSecurityConfigurerAdapter
     @Order(2)
     public static class WebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter
     {
+        @Override
         protected void configure(HttpSecurity http) throws Exception
         {
             // X-Frame-Options config for remaining sites

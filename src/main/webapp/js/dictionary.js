@@ -130,9 +130,17 @@ const DICTIONARY = {
         "en": "Awarded for gaining 175,000 XP",
         "pl": "Nagroda za zdobycie 175 000 PD"
     },
+    "fortbyte-9-desc": {
+        "en": "Awarded for completing 6 challenges from Week 5",
+        "pl": "Nagroda za ukończenie 6 wyzwań piątego tygodnia"
+    },
     "fortbyte-10-desc": {
         "en": "Awarded for gaining 60,000 XP",
         "pl": "Nagroda za zdobycie 60 000 PD"
+    },
+    "fortbyte-20-desc": {
+        "en": "Found at the center of any of the first three Storm Circles",
+        "pl": "Do znalezienia w centrum dowolnego z pierwszych trzech kręgów Burzy"
     },
     "fortbyte-25-desc": {
         "en": "Awarded at Battle Pass Tier 40",
@@ -163,14 +171,18 @@ const DICTIONARY = {
         "pl": "Nagroda za ukończenie 6 wyzwań czwartego tygodnia"
     },
     "fortbyte-57-desc": {
-        "en": "Awarded by finishing top 10 in squads, duos, or solo 25 times",
-        "pl": "Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 25 razy"
+        "en": "Awarded by finishing top 10 in squads, duos, or solo 5 times",
+        "pl": "Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 5 razy"
     },
     "fortbyte-66-desc": {
-        "en": "Awarded by finishing top 10 in squads, duos, or solo 75 times",
-        "pl": "Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 75 razy"
+        "en": "Awarded by finishing top 10 in squads, duos, or solo 30 times",
+        "pl": "Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 30 razy"
     },
     "fortbyte-71-desc": {
+        "en": "Awarded for completing 6 challenges from Week 1",
+        "pl": "Nagroda za ukończenie 6 wyzwań pierwszego tygodnia"
+    },
+    "fortbyte-73-desc": {
         "en": "Awarded for completing 6 challenges from Week 1",
         "pl": "Nagroda za ukończenie 6 wyzwań pierwszego tygodnia"
     },
@@ -182,13 +194,21 @@ const DICTIONARY = {
         "en": "Awarded for gaining 30,000 XP",
         "pl": "Nagroda za zdobycie 30 000 PD"
     },
+    "fortbyte-86-desc": {
+        "en": "Awarded for completing 6 challenges from Week 8",
+        "pl": "Nagroda za ukończenie 6 wyzwań ósmego tygodnia"
+    },
     "fortbyte-87-desc": {
+        "en": "Awarded by finishing top 10 in squads, duos, or solo 15 times",
+        "pl": "Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 15 razy"
+    },
+    "fortbyte-90-desc": {
         "en": "Awarded by finishing top 10 in squads, duos, or solo 50 times",
         "pl": "Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 50 razy"
     },
-    "fortbyte-90-desc": {
-        "en": "Awarded by finishing top 10 in squads, duos, or solo 100 times",
-        "pl": "Nagroda za ukończenie wśród 10 najlepszych w oddziałach, parach lub solo 100 razy"
+    "fortbyte-93-desc": {
+        "en": "Awarded for completing 6 challenges from Week 7",
+        "pl": "Nagroda za ukończenie 6 wyzwań siódmego tygodnia"
     },
     "fortbyte-96-desc": {
         "en": "Awarded at Battle Pass Tier 80",
