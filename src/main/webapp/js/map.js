@@ -273,7 +273,12 @@ const ITEMS = // comment property to prevent showing it in layers
                 iconSize: [32, 32],
                 iconAnchor: [16, 12],
                 popupAnchor: [0, -16]
-            })
+            }),
+            options: {
+                color: "#9C27AF",
+                width: 3,
+                interactive: false
+            }
         }
     };
 

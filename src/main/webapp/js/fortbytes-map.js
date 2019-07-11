@@ -294,9 +294,35 @@ const ITEMS = // comment property to prevent showing it in layers
                 iconAnchor: [16, 12],
                 popupAnchor: [0, -16],
                 className: 'number-div-icon',
-            })
+            }),
+            options: {
+                color: "#9C27AF",
+                width: 3,
+                interactive: false
+            }
         }
     };
+
+const ICONS = {
+    gliderTriangle: {
+        icon: L.icon({
+            iconUrl: '../images/icons/chest.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -16]
+        }),
+        applyToId: [80]
+    },
+    trailerRing: {
+        icon: L.icon({
+            iconUrl: '../images/icons/chest.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -16]
+        }),
+        applyToId: [12]
+    }
+};
 
 function setCookie(cname, cvalue, exdays)
 {
@@ -317,6 +343,11 @@ function getCookie(cname)
         if (c.indexOf(name) === 0) return c.substring(name.length, c.length);
     }
     return "";
+}
+
+function getLinkedItemsArray()
+{
+    return [];
 }
 
 function recalculateProgress()
@@ -587,6 +618,14 @@ function addJsonToOverlays(map)
                         return newMarker;
                     },
                     style: () => ITEMS[item]["options"],
+                    onEachFeature: (feature, layer) => // for controlling the lines
+                    {
+                        // check linked points (lines)
+                        if (feature.geometry.type === "LineString")
+                        {
+                            console.log(`jest linia`);
+                        }
+                    }
                 }).addTo(newItemOverlay);
             });
 

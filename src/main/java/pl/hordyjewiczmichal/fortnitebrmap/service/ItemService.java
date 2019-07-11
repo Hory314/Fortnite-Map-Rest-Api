@@ -73,78 +73,129 @@ public class ItemService
         ArrayNode features = geoJSON.put("type", "FeatureCollection")
                                     .putArray("features");
 
-        items.forEach(item ->
-        {
-            ObjectNode f = features.addObject();
-            f.put("type", "Feature");
+        items.stream()
+             .filter(item -> !(item.getType() == Type.FORTBYTE && item.getLink() != null)) // filter fortbytes lines
+             .forEach(item ->
+             {
+                 ObjectNode f = features.addObject();
+                 f.put("type", "Feature");
 
-            ObjectNode propObj = f.putObject("properties");
+                 ObjectNode propObj = f.putObject("properties");
 
-            if (includeProperties) // put extra properties for admin
-            {
-                propObj.put("id", item.getId());
-                propObj.put("type,", item.getType().toString());
-                propObj.put("accepted", item.getAccepted());
-                propObj.put("radius", item.getCircleRadius());
-                propObj.put("number", item.getNumber());
-                propObj.put("image_url", item.getImageUrl());
-                propObj.put("link_id", item.getLink() == null ? null : item.getLink().getId());
-                propObj.put("location_id", item.getLocation() == null ? null : item.getLocation().getId());
-                propObj.put("description_id", item.getDescription() == null ? null : item.getDescription().getId());
-            }
-            else // put public api properties
-            {
-                propObj.put("id", item.getId()); // include id
+                 if (includeProperties) // put extra properties for admin
+                 {
+                     propObj.put("id", item.getId());
+                     propObj.put("type,", item.getType().toString());
+                     propObj.put("accepted", item.getAccepted());
+                     propObj.put("radius", item.getCircleRadius());
+                     propObj.put("number", item.getNumber());
+                     propObj.put("image_url", item.getImageUrl());
+                     propObj.put("link_id", item.getLink() == null ? null : item.getLink().getId());
+                     propObj.put("location_id", item.getLocation() == null ? null : item.getLocation().getId());
+                     propObj.put("description_id", item.getDescription() == null ? null : item.getDescription()
+                                                                                              .getId());
+                 }
+                 else // put public api properties
+                 {
+                     propObj.put("id", item.getId()); // include id
 
-                if (item.getCircleRadius() != null) // include radius if exists
-                {
-                    propObj.put("radius", item.getCircleRadius());
-                }
+                     if (item.getCircleRadius() != null) // include radius if exists
+                     {
+                         propObj.put("radius", item.getCircleRadius());
+                     }
 
-                if (item.getNumber() != null) // include number if exists
-                {
-                    propObj.put("number", item.getNumber());
-                }
+                     if (item.getNumber() != null) // include number if exists
+                     {
+                         propObj.put("number", item.getNumber());
+                     }
 
-                if (item.getDescription() != null) // include descriptions if exists
-                {
-                    ObjectNode descObj = propObj.putObject("descriptions");
-                    descObj.put("en", item.getDescription().getEn());
-                    descObj.put("pl", item.getDescription().getPl());
-                }
+                     if (item.getDescription() != null) // include descriptions if exists
+                     {
+                         ObjectNode descObj = propObj.putObject("descriptions");
+                         descObj.put("en", item.getDescription().getEn());
+                         descObj.put("pl", item.getDescription().getPl());
+                     }
 
-                if (item.getImageUrl() != null) // include image url
-                {
-                    propObj.put("image_url", "http://" + request.getHeader("host") + "/" + item.getImageUrl());
-                }
-            }
+                     if (item.getImageUrl() != null) // include image url
+                     {
+                         propObj.put("image_url", "http://" + request.getHeader("host") + "/" + item.getImageUrl());
+                     }
+                 }
 
-            ArrayNode coords = f.putObject("geometry")
-                                .put("type", "Point")
-                                .putArray("coordinates");
+                 ArrayNode coords = f.putObject("geometry")
+                                     .put("type", "Point")
+                                     .putArray("coordinates");
 
-            coords.add(item.getLng())
-                  .add(item.getLat());
-        });
+                 coords.add(item.getLng())
+                       .add(item.getLat());
+             });
 
         // check if item is linked
-        // it's only line, so properties aren't needed
-        items.forEach(item ->
-        {
-            if (item.getLink() != null)
-            {
-                ObjectNode f = features.addObject();
-                f.put("type", "Feature")
-                 .putObject("properties");
+        // it's only line, so id and link id property is only needed
 
-                ArrayNode coords = f.putObject("geometry")
-                                    .put("type", "LineString")
-                                    .putArray("coordinates");
+        List<Item> multiLine = new ArrayList<>();
+        items.stream()
+             .filter(item -> item.getLink() != null)
+             .sorted((item1, item2) -> (int) (item2.getLink().getId() - item1.getLink().getId()))
+             .forEach(item ->
+             {
+                 //System.out.println(item.getLink().getId());
 
-                coords.addArray().add(item.getLng()).add(item.getLat());
-                coords.addArray().add(item.getLink().getLng()).add(item.getLink().getLat());
-            }
-        });
+                 if (item.getLink().getLink() != null) // link
+                 {
+                     multiLine.add(item);
+
+                 }
+                 else // no more links = fortbyte
+                 {
+                     System.out.println("poszło:");
+                     multiLine.forEach(i -> System.out.println("->" + i.getId()));
+                     System.out.println("=>" + item.getId());
+                     System.out.println("f>"+item.getLink().getId());
+                     multiLine.clear();
+                 }
+
+                 ObjectNode f = features.addObject();
+                 f.put("type", "Feature");
+
+                 ObjectNode propObj = f.putObject("properties");
+                 propObj.put("id", item.getId()); // put link id in properties
+                 propObj.put("link_id", item.getLink().getId()); // put link id in properties
+
+                 ArrayNode coords = f.putObject("geometry")
+                                     .put("type", "MultiLineString")
+                                     .putArray("coordinates");
+
+                 coords.addArray().add(item.getLng()).add(item.getLat());
+                 coords.addArray().add(item.getLink().getLng()).add(item.getLink().getLat());
+
+//            if (item.getLink() != null)
+//            {
+//                ObjectNode f = features.addObject();
+//                f.put("type", "Feature");
+//
+//                ObjectNode propObj = f.putObject("properties");
+//                propObj.put("id", item.getId()); // put link id in properties
+//                propObj.put("link_id", item.getLink().getId()); // put link id in properties
+//
+//                ArrayNode coords = f.putObject("geometry")
+//                                    .put("type", "LineString")
+//                                    .putArray("coordinates");
+//
+//                coords.addArray().add(item.getLng()).add(item.getLat());
+//                coords.addArray().add(item.getLink().getLng()).add(item.getLink().getLat());
+//            }
+
+                 //todo continue
+//                 Long idOfLinkedItem = item.getLink().getId();
+//                 if (item.getLink().getLink() == null)
+//                 {
+//                        // to jest master
+//
+//                 }
+
+
+             });
 
         return geoJSON;
     }

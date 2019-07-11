@@ -138,6 +138,10 @@ const DICTIONARY = {
         "en": "Awarded for gaining 60,000 XP",
         "pl": "Nagroda za zdobycie 60 000 PD"
     },
+    "fortbyte-15-desc": {
+        "en": "Awarded for completing 6 challenges from Week 9",
+        "pl": "Nagroda za ukończenie 6 wyzwań dziewiątego tygodnia"
+    },
     "fortbyte-20-desc": {
         "en": "Found at the center of any of the first three Storm Circles",
         "pl": "Do znalezienia w centrum dowolnego z pierwszych trzech kręgów Burzy"
@@ -162,6 +166,10 @@ const DICTIONARY = {
         "en": "Awarded at Battle Pass Tier 20",
         "pl": "Nagroda za osiągnięcie 20 stopnia karnetu bojowego"
     },
+    "fortbyte-45-desc": {
+        "en": "Awarded for completing all Season 9 Weekly Challenges",
+        "pl": "Nagroda za ukończenie wszystkich wyzwań tygodnia w sezonie 9."
+    },
     "fortbyte-46-desc": {
         "en": "Awarded at Battle Pass Tier 100",
         "pl": "Nagroda za osiągnięcie 100 stopnia karnetu bojowego"
@@ -169,6 +177,10 @@ const DICTIONARY = {
     "fortbyte-54-desc": {
         "en": "Awarded for completing 6 challenges from Week 4",
         "pl": "Nagroda za ukończenie 6 wyzwań czwartego tygodnia"
+    },
+    "fortbyte-56-desc": {
+        "en": "Awarded for completing 6 challenges from Week 10",
+        "pl": "Nagroda za ukończenie 6 wyzwań dziesiątego tygodnia"
     },
     "fortbyte-57-desc": {
         "en": "Awarded by finishing top 10 in squads, duos, or solo 5 times",
