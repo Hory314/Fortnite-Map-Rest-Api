@@ -131,70 +131,41 @@ public class ItemService
              });
 
         // check if item is linked
-        // it's only line, so id and link id property is only needed
-
+        // start and target ids properties only needed
         List<Item> multiLine = new ArrayList<>();
         items.stream()
              .filter(item -> item.getLink() != null)
              .sorted((item1, item2) -> (int) (item2.getLink().getId() - item1.getLink().getId()))
              .forEach(item ->
              {
-                 //System.out.println(item.getLink().getId());
-
                  if (item.getLink().getLink() != null) // link
                  {
                      multiLine.add(item);
-
                  }
                  else // no more links = fortbyte
                  {
-                     System.out.println("poszło:");
-                     multiLine.forEach(i -> System.out.println("->" + i.getId()));
-                     System.out.println("=>" + item.getId());
-                     System.out.println("f>"+item.getLink().getId());
+                     multiLine.add(item);
+
+                     ObjectNode f = features.addObject();
+                     f.put("type", "Feature");
+
+                     ObjectNode propObj = f.putObject("properties");
+                     propObj.put("start_id", multiLine.get(0).getId()); // put start id in properties
+                     propObj.put("target_id", item.getLink().getId()); // put target id in properties
+
+                     ArrayNode coords = f.putObject("geometry")
+                                         .put("type", "MultiLineString")
+                                         .putArray("coordinates");
+
+                     multiLine.forEach(i -> // add next line to array
+                     {
+                         ArrayNode MLine = coords.addArray();
+                         MLine.addArray().add(i.getLng()).add(i.getLat());
+                         MLine.addArray().add(i.getLink().getLng()).add(i.getLink().getLat());
+                     });
+
                      multiLine.clear();
                  }
-
-                 ObjectNode f = features.addObject();
-                 f.put("type", "Feature");
-
-                 ObjectNode propObj = f.putObject("properties");
-                 propObj.put("id", item.getId()); // put link id in properties
-                 propObj.put("link_id", item.getLink().getId()); // put link id in properties
-
-                 ArrayNode coords = f.putObject("geometry")
-                                     .put("type", "MultiLineString")
-                                     .putArray("coordinates");
-
-                 coords.addArray().add(item.getLng()).add(item.getLat());
-                 coords.addArray().add(item.getLink().getLng()).add(item.getLink().getLat());
-
-//            if (item.getLink() != null)
-//            {
-//                ObjectNode f = features.addObject();
-//                f.put("type", "Feature");
-//
-//                ObjectNode propObj = f.putObject("properties");
-//                propObj.put("id", item.getId()); // put link id in properties
-//                propObj.put("link_id", item.getLink().getId()); // put link id in properties
-//
-//                ArrayNode coords = f.putObject("geometry")
-//                                    .put("type", "LineString")
-//                                    .putArray("coordinates");
-//
-//                coords.addArray().add(item.getLng()).add(item.getLat());
-//                coords.addArray().add(item.getLink().getLng()).add(item.getLink().getLat());
-//            }
-
-                 //todo continue
-//                 Long idOfLinkedItem = item.getLink().getId();
-//                 if (item.getLink().getLink() == null)
-//                 {
-//                        // to jest master
-//
-//                 }
-
-
              });
 
         return geoJSON;
