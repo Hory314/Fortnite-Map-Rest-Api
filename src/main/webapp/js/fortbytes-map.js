@@ -19,6 +19,7 @@ let errorBox; // init after DOM content loaded
 let locale;
 let hideCompleted = false;
 let lastClickedMarker;
+let allMarkers = [];
 
 
 const ITEMS = // comment property to prevent showing it in layers
@@ -306,7 +307,7 @@ const ITEMS = // comment property to prevent showing it in layers
 const ICONS = {
     gliderTriangle: {
         icon: L.icon({
-            iconUrl: '../images/icons/chest.png',
+            iconUrl: '../images/icons/glider-triangle.png',
             iconSize: [32, 32],
             iconAnchor: [16, 16],
             popupAnchor: [0, -16]
@@ -315,7 +316,7 @@ const ICONS = {
     },
     trailerRing: {
         icon: L.icon({
-            iconUrl: '../images/icons/chest.png',
+            iconUrl: '../images/icons/trailer-ring.png',
             iconSize: [32, 32],
             iconAnchor: [16, 16],
             popupAnchor: [0, -16]
@@ -521,6 +522,8 @@ function addJsonToOverlays(map)
                 L.geoJSON(geoJson, {
                     pointToLayer: (feature, latlng) =>
                     {
+
+
                         // load opacities from cookie
                         let completedCookie = getCookie("completed");
 
@@ -543,6 +546,10 @@ function addJsonToOverlays(map)
                             type: item,
                             riseOnHover: true
                         });
+
+                        newMarker.options.linkedItems = [];
+                        allMarkers.push(newMarker);
+
                         if (feature.properties["number"] !== undefined) newMarker["options"]["number"] = feature.properties["number"];
 
                         // change class for completed markers
@@ -612,18 +619,84 @@ function addJsonToOverlays(map)
                                 popup.find("div:nth-child(2) img").css("display", "inline");
                             }
 
+
                             lastClickedMarker = newMarker;
                         });
+
 
                         return newMarker;
                     },
                     style: () => ITEMS[item]["options"],
                     onEachFeature: (feature, layer) => // for controlling the lines
                     {
-                        // check linked points (lines)
-                        if (feature.geometry.type === "LineString")
+                        if (feature.geometry.type === "MultiLineString")
                         {
-                            console.log(`jest linia`);
+                            feature.geometry.coordinates.forEach(c =>
+                            {
+                                let icon = ICONS.trailerRing.icon;
+                                switch (feature.properties.target_id) // todo: define icon depending on fortbytes no. here!!!
+                                {
+                                    case 47:
+                                    {
+                                        icon = ICONS.gliderTriangle.icon;
+                                        break;
+                                    }
+                                    case 54:
+                                    {
+                                        icon = ICONS.trailerRing.icon;
+                                        break;
+                                    }
+                                }
+
+                                let lineIcon = L.marker([c[0][1], c[0][0]], {
+                                    icon: icon,
+                                    type: item,
+                                    interactive: false
+                                }).addTo(newItemOverlay);
+
+
+                                let completedCookie = getCookie("completed");
+
+                                let completedArray = [];
+                                if (completedCookie !== "") completedArray = JSON.parse(completedCookie);
+
+                                allMarkers.forEach(m =>
+                                {
+                                    if (m.options.id === feature.properties.target_id) // if id of fortbyte is same as target id of lineIcon...
+                                    {
+                                        m.options.linkedItems.push(lineIcon);
+                                    }
+
+                                    if (m.options.id === layer.feature.properties.target_id)
+                                    {
+                                        m.options.linkedItems.push(layer);
+                                    }
+
+                                    completedArray.forEach(a =>
+                                    {
+                                        // console.log(a);
+                                        //console.log(">");
+                                        if (a === layer.feature.properties.target_id)
+                                        {
+                                            //console.log(m.options.linkedItems);
+                                            layer.options.opacity = 0;
+                                            m.options.linkedItems.forEach(lii =>
+                                            {
+                                                try
+                                                {
+                                                    lii.setOpacity(0);
+                                                }
+                                                catch (e)
+                                                {
+
+                                                }
+                                            })
+                                        }
+                                    });
+                                });
+
+                            });
+                            //console.log(allMarkers);
                         }
                     }
                 }).addTo(newItemOverlay);
@@ -876,6 +949,7 @@ document.addEventListener("DOMContentLoaded", () =>
     let completionCheckbox = infoBox.find("#completed-checkbox");
     completionCheckbox.on("change", function ()
     {
+        console.log(lastClickedMarker);
         if (this.checked)
         {
             let icon = L.divIcon({
@@ -887,6 +961,24 @@ document.addEventListener("DOMContentLoaded", () =>
                 className: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["className"] + " " + (hideCompleted ? "completed-hide" : "completed")
             });
             lastClickedMarker.setIcon(icon);
+
+            // hide linked items if exists
+            lastClickedMarker.options.linkedItems.forEach(li =>
+            {
+                try
+                {
+                    li.setOpacity(0);
+                }
+                catch (e)
+                {
+                }
+                li.options.style = () =>
+                {
+                };
+                li.options.opacity = 0;
+                li.remove();
+                li.addTo(battleRoyaleMap);
+            });
 
             // add/update cookie
             let completedCookie = getCookie("completed");
@@ -915,6 +1007,24 @@ document.addEventListener("DOMContentLoaded", () =>
                 className: ITEMS[lastClickedMarker.options.type]["icon"]["options"]["className"]
             });
             lastClickedMarker.setIcon(icon);
+
+            // show linked items if exists
+            lastClickedMarker.options.linkedItems.forEach(li =>
+            {
+                try
+                {
+                    li.setOpacity(1);
+                }
+                catch (e)
+                {
+                }
+                li.options.opacity = 1;
+                li.options.style = () =>
+                {
+                };
+                li.remove();
+                li.addTo(battleRoyaleMap);
+            });
 
             // remove id from cookie
             let completedCookie = getCookie("completed");
