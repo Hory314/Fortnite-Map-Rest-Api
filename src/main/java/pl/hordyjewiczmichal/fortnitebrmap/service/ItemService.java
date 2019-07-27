@@ -118,7 +118,7 @@ public class ItemService
 
                      if (item.getImageUrl() != null) // include image url
                      {
-                         propObj.put("image_url", "http://" + request.getHeader("host") + "/" + item.getImageUrl());
+                         propObj.put("image_url", "https://" + request.getHeader("host") + "/" + item.getImageUrl());
                      }
                  }
 

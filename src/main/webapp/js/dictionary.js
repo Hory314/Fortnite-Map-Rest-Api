@@ -239,10 +239,6 @@ const DICTIONARY = {
         "en": "Use code below to embed map on your site:",
         "pl": "Użyj poniższego kodu, aby umieścić mapę na swojej stronie:"
     },
-    "embed-warn": {
-        "en": "Warning: This site uses only http:// protocol",
-        "pl": "Uwaga: Ta strona używa tylko protokołu http://"
-    },
     "api-doc": {
         "en": "API Documentation",
         "pl": "Dokumentacja API"
