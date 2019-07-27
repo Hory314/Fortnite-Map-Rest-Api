@@ -74,7 +74,7 @@ public class ItemService
                                     .putArray("features");
 
         items.stream()
-             .filter(item -> !(item.getType() == Type.FORTBYTE && item.getLink() != null)) // filter fortbytes lines
+             .filter(item -> !(item.getType() == Type.FORTBYTE && item.getLink() != null)) // filter fortbytes lines // just item.getLink()==null in the future
              .forEach(item ->
              {
                  ObjectNode f = features.addObject();
@@ -135,7 +135,7 @@ public class ItemService
         List<Item> multiLine = new ArrayList<>();
         items.stream()
              .filter(item -> item.getLink() != null)
-             .sorted((item1, item2) -> (int) (item2.getLink().getId() - item1.getLink().getId()))
+             .sorted((item1, item2) -> (int) (item2.getId() - item1.getId()))
              .forEach(item ->
              {
                  if (item.getLink().getLink() != null) // link

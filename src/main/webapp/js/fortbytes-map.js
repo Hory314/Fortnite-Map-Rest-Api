@@ -544,7 +544,8 @@ function addJsonToOverlays(map)
                             icon: completedArray.indexOf(feature.properties["id"]) > -1 ? icon : icon,
                             id: feature.properties["id"],
                             type: item,
-                            riseOnHover: true
+                            riseOnHover: true,
+                            zIndexOffset: 500 // +500 to z-index for markers
                         });
 
                         newMarker.options.linkedItems = [];
@@ -636,22 +637,25 @@ function addJsonToOverlays(map)
                                 let icon = ICONS.trailerRing.icon;
                                 switch (feature.properties.target_id) // todo: define icon depending on fortbytes no. here!!!
                                 {
-                                    case 47:
+                                    case 109:
+                                    case 110:
                                     {
                                         icon = ICONS.gliderTriangle.icon;
                                         break;
                                     }
-                                    case 54:
+                                    case 82:
+                                    case 114:
                                     {
                                         icon = ICONS.trailerRing.icon;
                                         break;
                                     }
                                 }
 
-                                let lineIcon = L.marker([c[0][1], c[0][0]], {
+                                let markerForLine = L.marker([c[0][1], c[0][0]], {
                                     icon: icon,
                                     type: item,
-                                    interactive: false
+                                    interactive: false,
+                                    targetId: feature.properties.target_id
                                 }).addTo(newItemOverlay);
 
 
@@ -660,11 +664,19 @@ function addJsonToOverlays(map)
                                 let completedArray = [];
                                 if (completedCookie !== "") completedArray = JSON.parse(completedCookie);
 
+                                completedArray.forEach(a => // init opacity for markersForLines
+                                {
+                                    if (a === markerForLine.options.targetId)
+                                    {
+                                        markerForLine.setOpacity(0);
+                                    }
+                                });
+
                                 allMarkers.forEach(m =>
                                 {
-                                    if (m.options.id === feature.properties.target_id) // if id of fortbyte is same as target id of lineIcon...
+                                    if (m.options.id === feature.properties.target_id) // if id of fortbyte is same as target id of markerForLine...
                                     {
-                                        m.options.linkedItems.push(lineIcon);
+                                        m.options.linkedItems.push(markerForLine);
                                     }
 
                                     if (m.options.id === layer.feature.properties.target_id)
@@ -672,31 +684,16 @@ function addJsonToOverlays(map)
                                         m.options.linkedItems.push(layer);
                                     }
 
-                                    completedArray.forEach(a =>
+                                    completedArray.forEach(a =>  // init opacity for lines
                                     {
-                                        // console.log(a);
-                                        //console.log(">");
-                                        if (a === layer.feature.properties.target_id)
+                                        if (a === layer.feature.properties["target_id"])
                                         {
-                                            //console.log(m.options.linkedItems);
                                             layer.options.opacity = 0;
-                                            m.options.linkedItems.forEach(lii =>
-                                            {
-                                                try
-                                                {
-                                                    lii.setOpacity(0);
-                                                }
-                                                catch (e)
-                                                {
-
-                                                }
-                                            })
                                         }
                                     });
                                 });
 
                             });
-                            //console.log(allMarkers);
                         }
                     }
                 }).addTo(newItemOverlay);
@@ -949,7 +946,6 @@ document.addEventListener("DOMContentLoaded", () =>
     let completionCheckbox = infoBox.find("#completed-checkbox");
     completionCheckbox.on("change", function ()
     {
-        console.log(lastClickedMarker);
         if (this.checked)
         {
             let icon = L.divIcon({
