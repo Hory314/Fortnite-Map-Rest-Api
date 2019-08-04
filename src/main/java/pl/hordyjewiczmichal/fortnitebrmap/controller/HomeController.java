@@ -7,27 +7,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class HomeController
 {
-//    @RequestMapping
-//    public String home()
-//    {
-//        return "home";
-//    }
+    @RequestMapping
+    public String main()
+    {
+        return "main";
+    }
 
     @RequestMapping("/szymon")
-    public String home()
+    public String szymon()
     {
-        return "home";
+        return "szymon";
     }
 
-    @RequestMapping("/reboot-vans")
-    public String getRebootVans()
+    @RequestMapping("missions/season-10/week-1")
+    public String week1()
     {
-        return "reboot-vans";
-    }
-
-    @RequestMapping("/fortbytes")
-    public String getFortbytes()
-    {
-        return "fortbytes";
+        return "season10/week1";
     }
 }

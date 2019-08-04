@@ -398,10 +398,10 @@ label.css-label {
 
 @keyframes shadow-pulse {
     0% {
-        box-shadow: 0 0 0 0px rgba(225, 126, 232, 0.6);
+        box-shadow: 16px 16px 0 0px rgba(225, 126, 232, 1)
     }
     100% {
-        box-shadow: 0 0 0 25px rgba(0, 0, 0, 0);
+        box-shadow: 16px 16px 0 32px rgba(0, 0, 0, 0)
     }
 }
 
@@ -409,6 +409,8 @@ label.css-label {
     animation: shadow-pulse 2s infinite;
     border-radius: 100%;
     filter: contrast(200%);
+    width: 2px !important; /* pulse hack */
+    height: 2px !important;
 }
 
 #left-menu {
@@ -766,4 +768,14 @@ label.css-label {
 #settings a:visited
 {
     color: inherit;
+}
+
+.layer-icon-mission-normal
+{
+    background-image: url(../images/common/mission-normal.png) !important;
+}
+
+.layer-icon-mission-prestige
+{
+    background-image: url(../images/common/mission-prestige.png) !important;
 }

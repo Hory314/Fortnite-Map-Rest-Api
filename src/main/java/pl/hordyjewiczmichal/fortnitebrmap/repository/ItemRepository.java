@@ -20,4 +20,6 @@ public interface ItemRepository extends JpaRepository<Item, Long>
 
     @Query(value = "SELECT * FROM items WHERE type = ?1 ORDER BY RAND() LIMIT ?2", nativeQuery = true)
     List<Item> findRandom(String type, int limit);
+
+    List<Item> findByLocationIsNotNull();
 }

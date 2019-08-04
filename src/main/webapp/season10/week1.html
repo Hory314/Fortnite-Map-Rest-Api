@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <link rel="stylesheet" type="text/css" href="../../css/style.css"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Fortnite X Map</title>
+    <link rel="icon" type="image/png" href="../../images/icons/fortbyte.png" />
+    <link rel="stylesheet" href="../../vendor/leaflet/leaflet.css">
+    <script src="../../vendor/leaflet/leaflet.js"></script>
+    <script src="../../vendor/jquery/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="../../js/main/dictionary.js"></script>
+    <script type="text/javascript" src="../../js/season10/week1.js"></script>
+    <!--<script type="text/javascript" src="../../js/fortbytes-progress.js"></script>-->
+    <script type="text/javascript" src="../../js/main/background-control.js"></script>
+    <link href="../../vendor/lity/lity.min.css" rel="stylesheet">
+    <script src="../../vendor/lity/lity.min.js"></script>
+</head>
+<body>
+<div id="settings" class="lity-hide">
+    <div data-translate="bg-color">Background color:</div>
+    <div class="bg-common"><span data-translate="bg-common">Common</span></div>
+    <div class="bg-uncommon"><span data-translate="bg-uncommon">Uncommon</span></div>
+    <div class="bg-rare"><span data-translate="bg-rare">Rare</span></div>
+    <div class="bg-epic"><span data-translate="bg-epic">Epic</span></div>
+    <div class="bg-legendary"><span data-translate="bg-legendary">Legendary</span></div>
+    <div class="bg-mythic"><span data-translate="bg-mythic">Mythic</span></div>
+    <div class="bg-white"><span data-translate="bg-white">White</span></div>
+    <div class="bg-black"><span data-translate="bg-black">Black</span></div>
+    <div class="bg-gray"><span data-translate="bg-gray">Gray</span></div>
+    <div class="bg-light-gray"><span data-translate="bg-light-gray">Light Gray</span></div>
+    <hr>
+    <span data-translate="embed-info">Use code below to embed map on your site:</span>
+    <form class="code">
+        <textarea readonly disabled></textarea>
+    </form>
+    <hr>
+    <a href="#" data-translate="api-doc">API Documentation</a> (<span data-translate="ava-soon">available soon</span>)
+</div>
+<div id="feedback" class="lity-hide">
+    <form>
+        <label>
+            <textarea data-translate="feedback" data-translate-placeholder name="feedback" placeholder="Feedback"
+                      required></textarea>
+        </label><br>
+        <label>
+            <input data-translate="opt-email" data-translate-placeholder name="email" placeholder="Email (optional)"
+                   type="email">
+        </label><br>
+        <input type="submit" data-translate="submit" data-translate-value value="Submit">
+    </form>
+</div>
+<div id="error-box"></div>
+<div class="leaflet-touch leaflet-control-layers leaflet-touch leaflet-bar cog">
+    <a href="#settings" data-lity>
+        <img alt="" data-translate="settings" data-translate-title title="Settings"
+             src="../../images/common/cogwheel-icon.png">
+    </a>
+</div>
+<div id="popup">
+    <div>
+        <img src="" alt=""><span></span>
+        <div class="close-btn" data-translate="close" data-translate-title data-translate-no-innerhtml title="Close">+
+        </div>
+    </div>
+    <div>
+        <span class="desc"></span>
+        <img src="" alt="" data-lity>
+        <form><span data-translate="check-if-completed">Hide this item::</span>
+            <input id="completed-checkbox" class="css-checkbox" type="checkbox">
+            <label class="css-label" data-translate="task-done" for="completed-checkbox">Done</label>
+        </form>
+    </div>
+</div>
+
+
+<div id="fnbr_map" class="bg-rare">
+    <div class="bg-spikes">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+<div id="cookies">
+    <span class="cookie-warn">
+        <span data-translate="cookie-warn">This site uses cookies to personalise content and adverts, and to analyse traffic.</span> <button>OK</button>
+    </span>
+</div>
+<div id="locale">
+    <span id="flag-us"><img title="English" alt="en"
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAARCAYAAAA2cze9AAACeUlEQVQ4T6WUW2gTQRSG/+k2DUJFKjFQtTYJXpB6QbHY2lzb2gcvCIL4mJdCntIIIuSCGNBcQBBjRAykIIW8iAiG0oeKbS4tCj4Ealrog0lsH6qx2oKlki7rykx2KZpoFzownGH3zH++M3POEADkr4ltDhEAm1S4wTbw6OZe7e6Q0NDIiaIIQgiopUNeBzT5+jGpAnUlAOE4/GpSbawKCHaGb9+lv7gr10bWPbesTdnpTzD1tCM7XYKpR8es8ZwOoftpjMQvK0pIEATkcrlcf39/JxVv7Ls4zFuMepiNOmSmSjU2PVXEs66VuuJyZtTSQTNeK5VwdPixiol3257yfl8f0tkCrGYDUpk/7Z17bzD28roicuqUTCY/2+32NiZ+8myU77UYYLMYMJkuoNdqwERKsukCW7+yfKuK07uglNKd1EQkBN/n5nB69HmV/NDxB3zAfx4TqY8sQCpThNWsx2SmCBrU53+Ndym7YvJEIvFlaGhoPxPfdzDMyzsJCESIoJaBQsSxXQKenJHIa1E3y0Xa8TWfR9f0eJU8FAotDQ4OahSjbeEYj8eXPR5PKxNPd3TyrSdOKdNWcOZLMzlYZt9Xyb1eb9nlcrUoU9/aKxKJrAaDwT1MfLztCN8mk0vdxrqOtWjNkW5+qxeHAIszOQwszlfJnU7nis/na96aSZlHIBBYi0ajLUx8TNvOHzjcoWynXONSR9bUPSFYmP+AC+UFRs653e6sw+HoVqvVygL8x6tSqSAWi70Nh8Mm9iq+sF260VwsBH8ul9WCQEtePuh/HKr8DEp1LftznAo7NNrKut7gvTo5+lB+y5sA7KRZbBsdEAD8ALDxGxpy9UoFOcYRAAAAAElFTkSuQmCC"></span>
+    <span id="flag-pl"><img title="Polski" alt="pl"
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAARCAYAAAA2cze9AAAByUlEQVQ4T62UuUsDQRTGv1ljEO/7aGwElciSxBAWZCVFxDT+AyJWtgHBf0QkraWFvVXQFNFEWMO6CYtBBRsb7/tAMpqR2clKiFfQ/WB4w+68H29mvnkEAKkY+KcYAGtwsBSLxUZVVV0nhLQyxr//TYQQMMZu0+l0OBqNZjm8RtO0c5/P1+52u/9GLcsqFArIZrPXiqJ0c7hL0zTq8Xj+DbYB+XweiqLUWvBUKkVlWXYMbpomVFUV8GQySb1er2PwXC6HUCgk4IlEgvr9fsfghmEgHA4LeDwep4FAwDG4ruuIRCICfjQ9Tz/IxSIgSQCPXPacRy7uVJ71nWNL/wZWlwT8YHKWdo6rIpkQgHudx2pkry17H5ebWxhaXxFwMzhFOwLBUmUlcLWPqbIYxnBl6JB31gR8d3CcdvkFnICAgVlRnIKY81itLowMRg+3BDzTH6Q9PqXa3J/XEeDM0BA8zgj4dvcI7Rt2zi0n+zrGzvcseM1Gr3zXU9/RUN/Y9rmqygv75cKfH29w9nz1NHFqtlhdcaVdnmujj4vFl/uG1+Jrmd++8p7tw89uckkuSHXNT7euxoWZG3PZ7uW8HTbxXThw8G8AHgAU3gF8TqtKFjFe2wAAAABJRU5ErkJggg=="></span>
+</div>
+</body>
+</html>

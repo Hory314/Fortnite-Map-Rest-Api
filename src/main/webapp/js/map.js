@@ -1,5 +1,5 @@
 const ELEMENT_ID = "fnbr_map";
-const MAP_VERSION = "9.00";
+const MAP_VERSION = "10.00";
 const TILE_MAP_URL_TEMPLATE = "{z}/{x}/{y}.jpg";
 // const API_URL = "http://localhost:8080/api/";
 const API_URL = "/api/";

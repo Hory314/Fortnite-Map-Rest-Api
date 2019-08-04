@@ -17,7 +17,10 @@ public class Location
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String name;
+    private String en;
+
+    @Column(unique = true)
+    private String pl;
 
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     private List<Item> items;

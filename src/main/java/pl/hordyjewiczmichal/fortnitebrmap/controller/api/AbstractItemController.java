@@ -45,6 +45,12 @@ public abstract class AbstractItemController
         }
     }
 
+    @GetMapping("/in-named-locations")
+    protected ObjectNode getInLocation()
+    {
+        return itemService.getItemsInNamedLocations(getType());
+    }
+
     @GetMapping("/random")
     protected ObjectNode getRandom()
     {

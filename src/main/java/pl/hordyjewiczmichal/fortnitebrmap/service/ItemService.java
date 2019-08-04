@@ -48,11 +48,17 @@ public class ItemService
     public ObjectNode getItemsInLocation(Type type, String location) throws NotFoundException
     {
         String parsedLocation = locationService.parseLocation(location);
-        Location l = locationRepository.findByName(parsedLocation);
+        Location l = locationRepository.findByEn(parsedLocation);
 
         if (l == null) throw new NotFoundException(location);
 
         List<Item> items = itemRepository.findByTypeAndLocation(type, l);
+        return getGeoJSON(items);
+    }
+
+    public ObjectNode getItemsInNamedLocations(Type type)
+    {
+        List<Item> items = itemRepository.findByLocationIsNotNull();
         return getGeoJSON(items);
     }
 
@@ -197,7 +203,7 @@ public class ItemService
         newItem.setType(type);
 
         String parsedLocation = locationService.parseLocation(newItemDTO.getLocation());
-        Location l = locationRepository.findByName(parsedLocation);
+        Location l = locationRepository.findByEn(parsedLocation);
         newItem.setLocation(l); // l can be null
 
         // newItem.setLink(itemRepository.getOne(999999L));

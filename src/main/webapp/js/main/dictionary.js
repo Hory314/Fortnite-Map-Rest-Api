@@ -20,6 +20,28 @@ const DICTIONARY = {
                 "sing": "Fortbajt",
                 "plur": "Fortbajty"
             }
+        },
+    rebootVan:
+        {
+            "en": {
+                "sing": "Reboot Van",
+                "plur": "Reboot Vans"
+            },
+            "pl": {
+                "sing": "Furgonetka Restartu",
+                "plur": "Furgonetki Restartu"
+            }
+        }, // todo rest of items
+    zipline:
+        {
+            "en": {
+                "sing": "Zipline",
+                "plur": "Ziplines"
+            },
+            "pl": {
+                "sing": "Tyrolka",
+                "plur": "Tyrolki"
+            }
         }, // todo rest of items
     "err-item-type": {
         "en": "Error: Please select item type",
